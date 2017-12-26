@@ -42,7 +42,14 @@ else ()
     set(EXAMPLE_LIBS dsa_sdk ${EXAMPLE_LIBS})
 endif ()
 
+include_directories("src")
+add_executable(cmdline_dslink
+        src/main.cc
+        src/cmdline.cc
+        src/commands/command.cc
+        src/commands/command_factory.cc
+        src/commands/command_unknown.cc
+        src/commands/command_quit.cc)
 
-add_executable(cmdline_dslink main.cc cmdline.cc)
 target_link_libraries(cmdline_dslink ${EXAMPLE_LIBS} dsa_sdk)
 

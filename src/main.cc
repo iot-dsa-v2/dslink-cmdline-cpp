@@ -4,14 +4,11 @@
 
 #include "dslink.h"
 #include "util/app.h"
-#include "cmdline.h"
 
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/asio.hpp>
 #include <module/default/console_logger.h>
 
-#define MAX_LENGTH 4096
+#include "cmdline.h"
+
 
 using namespace dsa;
 
@@ -45,7 +42,7 @@ int main(int argc, char *argv[]) {
   auto app = std::make_shared<App>();
 
   // Connect to the broker
-   if(!connect_dslink(argc, argv, app)) return 1;
+  if(!connect_dslink(argc, argv, app)) return 1;
 
   auto cmdline = CmdLine(app, cmd_link);
   cmdline.run();
