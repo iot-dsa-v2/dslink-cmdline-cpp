@@ -49,6 +49,8 @@ add_executable(cmdline_dslink
         src/commands/command.cc
         src/commands/command_factory.cc
         src/commands/command_unknown.cc
+        src/commands/command_list.cc
+        src/commands/command_cd.cc
         src/commands/command_quit.cc)
 
 target_link_libraries(cmdline_dslink ${EXAMPLE_LIBS} dsa_sdk)

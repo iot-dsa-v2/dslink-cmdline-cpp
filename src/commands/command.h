@@ -29,6 +29,11 @@ struct command_str{
   std::vector<std::string> str;
   bool token_error;
   COMMAND_TYPE type;
+
+  std::string get_path(){
+    if(str.size() > 1) return str[1];
+    return std::string();
+  }
 } typedef command_str;
 
 using namespace dsa;
@@ -42,14 +47,15 @@ class Command {
 
   boost::mutex print_mutex;
 
-  virtual void _print() {};
-  void print();
+  MessageStatus status;
 
-  virtual void _print_usage_info() {};
-  void print_usage_info();
-
-  virtual COMMAND_RETURN_TYPE _execute() {return COMMAND_RETURN_CONTINUE;};
   virtual void _clear() {};
+  virtual void _print() {};
+  virtual void _print_usage_info() {};
+  virtual COMMAND_RETURN_TYPE _execute() {return COMMAND_RETURN_CONTINUE;};
+
+  void print();
+  void print_usage_info();
 
   Command(const command_str command,
           const std::string current_path,
@@ -62,6 +68,9 @@ class Command {
   void clear();
 
   std::string get_current_path();
+
+  static std::string merge_paths(const std::string &first, const std::string &second);
+  static int wait_for_bool(int wait_time, const std::function<bool()>& callback);
 };
 
 #endif //CMDLINE_DSLINK_COMMAND_H

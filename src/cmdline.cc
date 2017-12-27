@@ -7,7 +7,7 @@ CmdLine::CmdLine(std::shared_ptr<App> app, ref_<DsLink> dslink) {
   this->app = app;
   this->link = dslink;
 
-  current_path = "downstream";
+  current_path = "";
   this->strand.reset(app->new_strand());
 }
 
@@ -40,14 +40,15 @@ bool CmdLine::get_input() {
   // 3. Execute Command
   auto return_ = cmd->execute();
 
+  // 3.1 Get if current path changed
+  current_path = cmd->get_current_path();
+
   // 4. If command says quit, we quit if continue we will
   if(return_ == COMMAND_RETURN_TERMINATE) return false;
   if(return_ == COMMAND_RETURN_CONTINUE) return true;
 
   // 5. Command says we need wait he was executing
-  do {
-    std::cout << '\n' << "Press enter to continue...";
-  } while (std::cin.get() != '\n');
+  while (std::cin.get() != '\n'){}
 
   // 6. Clear
   cmd->clear();
