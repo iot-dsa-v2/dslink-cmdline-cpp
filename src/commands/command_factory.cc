@@ -5,6 +5,7 @@
 #include "command_quit.h"
 #include "command_list.h"
 #include "command_cd.h"
+#include "command_subscribe.h"
 
 CommandFactory::CommandFactory() {
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("quit", COMMAND_QUIT));
@@ -83,7 +84,7 @@ std::shared_ptr<Command> CommandFactory::get_command(std::string _line,
     case COMMAND_LIST:
       return make_shared_<CommandList>(command_str, current_path, link);
     case COMMAND_SUBSCRIBE:
-      break;
+      return make_shared_<CommandSubscribe>(command_str, current_path, link);
     case COMMAND_INVOKE:
       break;
     case COMMAND_SET:

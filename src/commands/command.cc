@@ -21,6 +21,7 @@ void Command::print_usage_info() {
 void Command::print() {
   // clear screen
   for(int i = 0; i < 100; i++) std::cout<<std::endl;
+
   print_mutex.lock();
   //std::cout<< "Message Status : "<<status<<std::endl;
   _print();
@@ -48,7 +49,7 @@ COMMAND_RETURN_TYPE Command::execute() {
 }
 
 void Command::clear() {
-  std::cout<<"Exiting from command..."<<std::endl;
+  std::cout<<"Exiting from stream..."<<std::endl;
   _clear();
 }
 
