@@ -121,4 +121,3 @@ int Command::wait_for_bool(int wait_time, const std::function<bool()> &callback)
 std::string Command::get_current_path() {
   return current_path;
 }
-

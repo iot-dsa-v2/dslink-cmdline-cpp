@@ -1,5 +1,6 @@
 
 #include "command_cd.h"
+
 CommandCD::CommandCD(const command_str &command,
                      const std::string &current_path,
                      const ref_<DsLink> &link):
@@ -13,7 +14,7 @@ void CommandCD::_print_usage_info() {
 }
 
 COMMAND_RETURN_TYPE CommandCD::_execute() {
-  if(command.str.size() > 2){
+  if(command.num_args() > 1){
     throw std::runtime_error("There are more than 1 argument.");
   }
 

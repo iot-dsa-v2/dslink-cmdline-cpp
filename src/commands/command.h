@@ -8,6 +8,9 @@
 #include <vector>
 
 #include "dslink.h"
+#include "variant/variant.h"
+
+using namespace dsa;
 
 enum COMMAND_TYPE{
   COMMAND_UNKNOWN = 0,
@@ -26,14 +29,52 @@ enum COMMAND_RETURN_TYPE{
 };
 
 struct command_str{
-  std::vector<std::string> str;
   bool token_error;
+
+  std::vector<std::string> str;
   COMMAND_TYPE type;
 
+  bool is_debug;
+  bool is_stream;
+
+  command_str(){
+    token_error = false;
+
+    type = COMMAND_UNKNOWN;
+
+    is_debug = false;
+    is_stream = false;
+  }
+
+  size_t num_args(){ return str.size() - 1; }
+
   std::string get_path(){
-    if(str.size() > 1) return str[1];
+    if(num_args() > 0) return str[1];
     return std::string();
   }
+
+  bool is_value_available(){
+    return num_args() > 1;
+  }
+
+  Var get_value(){
+    if(!is_value_available())
+      return Var();
+
+    // It is a hack for reading value in json
+    try{
+      Var v = Var::from_json("{\"var\":" + str[2]+ "}");
+      return v["var"];
+    }catch(std::exception e){
+      throw std::runtime_error("error in json turning your value into dsa::Var : ");
+    }
+  }
+
+  std::string get_attribute(){
+    if(num_args() > 2) return str[3];
+    return std::string();
+  }
+
 } typedef command_str;
 
 using namespace dsa;

@@ -7,7 +7,7 @@ CommandList::CommandList(const command_str &command,
     Command(command, current_path, link) {}
 
 COMMAND_RETURN_TYPE CommandList::_execute() {
-  if(command.str.size() > 2){
+  if(command.num_args() > 1){
     throw std::runtime_error("There are more than 1 argument.");
   }
 
@@ -43,13 +43,5 @@ void CommandList::_print() {
 
   std::cout<<"Listing path : "<<target_path<<std::endl;
 
-  for(auto m:map) {
-    std::cout<<"> "<<m.first;
-
-    auto value = m.second.to_string();
-    if(value.size() != 0)
-      std::cout<<" : "<<value;
-
-    std::cout<<std::endl;
-  }
+  std::cout<<Var(new VarMap(map)).to_json(1)<<std::endl;
 }

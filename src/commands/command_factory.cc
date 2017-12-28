@@ -6,6 +6,7 @@
 #include "command_list.h"
 #include "command_cd.h"
 #include "command_subscribe.h"
+#include "command_set.h"
 
 CommandFactory::CommandFactory() {
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("quit", COMMAND_QUIT));
@@ -26,8 +27,6 @@ command_str CommandFactory::tokenize(std::string _line) {
   auto line = std::string(_line);
 
   command_str cmd;
-  cmd.token_error = false;
-  cmd.type = COMMAND_UNKNOWN;
 
   while(line.size()!=0) {
     auto char_ = line[0];
@@ -41,6 +40,11 @@ command_str CommandFactory::tokenize(std::string _line) {
     switch(char_){
       case '{':
         pos = line.find('}');
+        if(pos < line.size()) pos++;
+        break;
+
+      case '[':
+        pos = line.find(']');
         if(pos < line.size()) pos++;
         break;
 
@@ -65,15 +69,29 @@ command_str CommandFactory::tokenize(std::string _line) {
     line.erase(0, pos);
   }
 
+  if(cmd.str.size() > 0){
+    if(cmd.str[0] == "debug"){
+      cmd.is_debug = true;
+      cmd.str.erase(cmd.str.begin());
+    }
+  }
+
+  if(cmd.str.size() > 0){
+    if(cmd.str[0] == "stream"){
+      cmd.is_stream = true;
+      cmd.str.erase(cmd.str.begin());
+    }
+  }
+
   if(cmd.str.size() > 0)
     cmd.type = command_str_map[cmd.str[0]];
 
   return std::move(cmd);
 }
 
-std::shared_ptr<Command> CommandFactory::get_command(std::string _line,
-                                                     std::string current_path,
-                                                     ref_<DsLink> link) {
+std::shared_ptr<Command> CommandFactory::get_command(
+    std::string _line, std::string current_path, ref_<DsLink> link) {
+
   auto command_str = tokenize(_line);
 
   switch (command_str.type){
@@ -88,7 +106,7 @@ std::shared_ptr<Command> CommandFactory::get_command(std::string _line,
     case COMMAND_INVOKE:
       break;
     case COMMAND_SET:
-      break;
+      return make_shared_<CommandSet>(command_str, current_path, link);
   }
 
   return make_shared_<CommandUnknown>(command_str, current_path, link);

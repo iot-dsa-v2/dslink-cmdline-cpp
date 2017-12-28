@@ -1,0 +1,9 @@
+
+#ifndef CMDLINE_DSLINK_COMMAND_INVOKE_H
+#define CMDLINE_DSLINK_COMMAND_INVOKE_H
+
+class CommandInvoke {
+
+};
+
+#endif //CMDLINE_DSLINK_COMMAND_INVOKE_H

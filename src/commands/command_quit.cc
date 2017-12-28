@@ -16,7 +16,7 @@ void CommandQuit::_print_usage_info() {
 
 COMMAND_RETURN_TYPE CommandQuit::_execute() {
 
-  if(command.str.size() != 1) {
+  if(command.num_args() != 0) {
     throw std::runtime_error("quit command does not have any arguments");
   }
 

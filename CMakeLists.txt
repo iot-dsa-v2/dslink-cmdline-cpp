@@ -43,6 +43,8 @@ else ()
 endif ()
 
 include_directories("src")
+include_directories("cmake-build-debug/deps/sdk/deps/jansson-build/include/")
+
 add_executable(cmdline_dslink
         src/main.cc
         src/cmdline.cc
@@ -51,6 +53,7 @@ add_executable(cmdline_dslink
         src/commands/command_unknown.cc
         src/commands/command_list.cc
         src/commands/command_cd.cc
+        src/commands/command_set.cc
         src/commands/command_subscribe.cc
         src/commands/command_quit.cc)
 

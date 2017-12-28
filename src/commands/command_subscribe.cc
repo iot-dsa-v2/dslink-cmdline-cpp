@@ -20,7 +20,7 @@ void CommandSubscribe::_clear() {
 }
 
 COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
-  if(command.str.size() > 2){
+  if(command.num_args() > 1){
     throw std::runtime_error("There are more than 1 argument.");
   }
 
