@@ -1,18 +1,18 @@
 
 #include "command_cd.h"
 
+std::vector<int> CommandCD::_available_args_num_options() {
+  return {0, 1};
+}
+
 void CommandCD::_print_usage_info() {
   std::cout<<"Printing cd usage info"<<std::endl;
 }
 
 COMMAND_RETURN_TYPE CommandCD::_execute() {
-  if(command.num_args() > 1){
-    throw std::runtime_error("There are more than 1 argument.");
-  }
-
   // There is special case if only cd is typed. We are returning back to the root
-  if(command.get_path().size() != 0)
-    target_path = Command::merge_paths(current_path, command.get_path());
+  if(cmd_data.get_path_str().size() != 0)
+    target_path = Command::merge_paths(current_path, cmd_data.get_path_str());
   else
     target_path = std::string("");
 
@@ -43,6 +43,5 @@ COMMAND_RETURN_TYPE CommandCD::_execute() {
 
 void CommandCD::_clear() {
 }
-
 void CommandCD::_print() {
 }

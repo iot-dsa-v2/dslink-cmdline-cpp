@@ -2,7 +2,7 @@
 #ifndef CMDLINE_DSLINK_COMMAND_INVOKE_H
 #define CMDLINE_DSLINK_COMMAND_INVOKE_H
 
-#include "command.h"
+#include "core/command.h"
 
 #include "message/response/invoke_response_message.h"
 
@@ -15,6 +15,7 @@ class CommandInvoke: public Command {
   using Command::Command;
 
  protected:
+  std::vector<int> _available_args_num_options() override;
   void _print_usage_info() override;
   COMMAND_RETURN_TYPE _execute() override;
   void _clear() override;

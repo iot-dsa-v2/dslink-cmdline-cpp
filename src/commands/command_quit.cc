@@ -2,15 +2,15 @@
 #include "command_quit.h"
 
 
+std::vector<int> CommandQuit::_available_args_num_options() {
+  return {0};
+}
+
 void CommandQuit::_print_usage_info() {
   std::cout<<"Just type 'quit'..."<<std::endl;
 }
 
 COMMAND_RETURN_TYPE CommandQuit::_execute() {
-
-  if(command.num_args() != 0) {
-    throw std::runtime_error("quit command does not have any arguments");
-  }
 
   std::cout<<"Quiting..."<<std::endl;
 
@@ -20,7 +20,6 @@ COMMAND_RETURN_TYPE CommandQuit::_execute() {
 void CommandQuit::_clear() {
 
 }
-
 void CommandQuit::_print() {
 
 }

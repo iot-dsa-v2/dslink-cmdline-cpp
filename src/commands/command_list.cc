@@ -1,16 +1,16 @@
 
 #include "command_list.h"
 
+std::vector<int> CommandList::_available_args_num_options() {
+  return {0, 1};
+}
+
 void CommandList::_print_usage_info() {
   std::cout<<"Printing list usage info"<<std::endl;
 }
 
 COMMAND_RETURN_TYPE CommandList::_execute() {
-  if(command.num_args() > 1){
-    throw std::runtime_error("There are more than 1 argument.");
-  }
-
-  target_path = Command::merge_paths(current_path, command.get_path());
+  target_path = Command::merge_paths(current_path, cmd_data.get_path_str());
 
   incoming_list_cache = link->list(
       target_path.c_str(),
@@ -32,7 +32,6 @@ void CommandList::_clear() {
     incoming_list_cache.reset();
   }
 }
-
 void CommandList::_print() {
   auto map = cache.get_map();
 

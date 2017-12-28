@@ -2,16 +2,16 @@
 #include "command_subscribe.h"
 
 
+std::vector<int> CommandSubscribe::_available_args_num_options() {
+  return {1};
+}
+
 void CommandSubscribe::_print_usage_info() {
   std::cout<<"Printing subscribe usage info"<<std::endl;
 }
 
 COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
-  if(command.num_args() > 1){
-    throw std::runtime_error("There are more than 1 argument.");
-  }
-
-  target_path = Command::merge_paths(current_path, command.get_path());
+  target_path = Command::merge_paths(current_path, cmd_data.get_path_str());
 
   SubscribeOptions update_options;
   update_options.queue_duration = 0x9876;
@@ -38,7 +38,6 @@ void CommandSubscribe::_clear() {
     incoming_subscribe_cache.reset();
   }
 }
-
 void CommandSubscribe::_print() {
   std::cout<<"Subscribe message from path : "<<target_path<<std::endl;
   if(message->get_body() != nullptr)

@@ -11,7 +11,7 @@
 #include "dslink.h"
 #include "util/app.h"
 
-#include "commands/command_factory.h"
+#include "command_factory.h"
 
 #define CMD_MAX_LENGTH 4096
 

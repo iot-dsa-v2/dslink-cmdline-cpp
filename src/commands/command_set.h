@@ -2,8 +2,8 @@
 #ifndef CMDLINE_DSLINK_COMMAND_SET_H
 #define CMDLINE_DSLINK_COMMAND_SET_H
 
+#include "core/command.h"
 #include <dsa/stream.h>
-#include "command.h"
 
 class CommandSet : public Command {
  private:
@@ -14,6 +14,7 @@ class CommandSet : public Command {
   using Command::Command;
 
  protected:
+  std::vector<int> _available_args_num_options() override;
   void _print_usage_info() override;
   COMMAND_RETURN_TYPE _execute() override;
   void _clear() override;

@@ -3,11 +3,12 @@
 #include <boost/algorithm/string/classification.hpp>
 #include "command.h"
 
+
 std::string Command::current_path = "";
 ref_<DsLink> Command::link = nullptr;
 
-Command::Command(const command_str command) {
-  this->command = command;
+Command::Command(const command_data cmd_data) {
+  this->cmd_data = cmd_data;
 }
 
 
@@ -31,11 +32,24 @@ void Command::print() {
 
 COMMAND_RETURN_TYPE Command::execute() {
   // First check command
-  if(command.token_error){
+  if(cmd_data.token_error){
     std::cout<<"\nThere is an error on tokenize.\n"<<std::endl;
     print_usage_info();
     std::cout<<"\n"<<std::endl;
     return COMMAND_RETURN_CONTINUE;
+  }
+
+  // Check argument number is valid
+  auto avaib_args = _available_args_num_options();
+  if(avaib_args.size() != 0) {
+    auto provid_arg = cmd_data.args.size();
+
+    if (std::find(avaib_args.begin(), avaib_args.end(), provid_arg) == avaib_args.end()) {
+      std::cout << "\nThere is an error on argument numbers.\n" << std::endl;
+      print_usage_info();
+      std::cout << "\n" << std::endl;
+      return COMMAND_RETURN_CONTINUE;
+    }
   }
 
   try{
@@ -115,4 +129,19 @@ int Command::wait_for_bool(int wait_time, const std::function<bool()> &callback)
     waited += SLEEP_INTERVAL;
   }
   return -1;
+}
+
+Var Command::get_Var_from_str(const std::string str) {
+  if (str.size() == 0)
+    throw std::runtime_error("str is null for turning into VAR ");
+
+  // It is a hack for reading value in json
+  try {
+    Var v = Var::from_json("{\"var\":" + str + "}");
+    return v["var"];
+  } catch (
+      std::exception e
+  ) {
+    throw std::runtime_error("error in json turning your value into dsa::Var : ");
+  }
 }

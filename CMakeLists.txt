@@ -48,8 +48,9 @@ include_directories("cmake-build-debug/deps/sdk/deps/jansson-build/include/")
 add_executable(cmdline_dslink
         src/main.cc
         src/cmdline.cc
-        src/commands/command.cc
-        src/commands/command_factory.cc
+        src/command_factory.cc
+        src/commands/core/command.cc
+        src/commands/core/command_data.cc
         src/commands/command_unknown.cc
         src/commands/command_list.cc
         src/commands/command_cd.cc

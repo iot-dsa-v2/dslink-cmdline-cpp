@@ -8,7 +8,8 @@
 #include <vector>
 #include <map>
 
-#include "command.h"
+#include "commands/core/command.h"
+#include "commands/core/command_data.h"
 
 using namespace dsa;
 
@@ -19,10 +20,6 @@ using namespace dsa;
    CommandFactory();
 
    std::shared_ptr<Command> get_command(std::string _line);
-
-  private:
-   command_str tokenize(std::string _line);
-
  };
 
 #endif //CMDLINE_DSLINK_COMMAND_FACTORY_H

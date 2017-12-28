@@ -3,21 +3,21 @@
 #include "message/request/invoke_request_message.h"
 #include "stream/requester/incoming_invoke_stream.h"
 
+std::vector<int> CommandInvoke::_available_args_num_options() {
+  return {2};
+}
+
 void CommandInvoke::_print_usage_info() {
   std::cout<<"Writing invoke usage info..."<<std::endl;
 }
 
 COMMAND_RETURN_TYPE CommandInvoke::_execute() {
-  if(command.num_args() != 2) {
-    throw std::runtime_error("there must be 3 variable for invoke");
-  }
-
-  target_path = Command::merge_paths(current_path, command.get_path());
+  target_path = Command::merge_paths(current_path, cmd_data.get_path_str());
 
   ref_<InvokeRequestMessage> invoke_req = make_ref_<InvokeRequestMessage>();
   invoke_req->set_target_path(target_path);
 
-  invoke_req->set_value(command.get_value());
+  invoke_req->set_value(get_Var_from_str(cmd_data.get_value_str()));
 
   bool is_triggered = false;
 
@@ -50,7 +50,6 @@ COMMAND_RETURN_TYPE CommandInvoke::_execute() {
 void CommandInvoke::_clear() {
 
 }
-
 void CommandInvoke::_print() {
 
 }

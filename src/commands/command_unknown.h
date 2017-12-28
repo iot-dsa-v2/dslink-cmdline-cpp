@@ -2,7 +2,7 @@
 #ifndef CMDLINE_DSLINK_COMMAND_UNKNOWN_H
 #define CMDLINE_DSLINK_COMMAND_UNKNOWN_H
 
-#include "command.h"
+#include "core/command.h"
 
 class CommandUnknown: public Command {
  private:

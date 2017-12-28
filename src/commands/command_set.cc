@@ -3,28 +3,28 @@
 #include "message/request/set_request_message.h"
 #include "stream/requester/incoming_set_stream.h"
 
+std::vector<int> CommandSet::_available_args_num_options() {
+  return {2,3};
+}
+
 void CommandSet::_print_usage_info() {
   std::cout<<"Printing set usage info"<<std::endl;
 }
 
 COMMAND_RETURN_TYPE CommandSet::_execute() {
 
-  if(command.num_args() != 2 && command.num_args() != 3){
-    throw std::runtime_error("There must be 2-3 argument; path and value and optional attr.");
-  }
-
   auto request = make_ref_<SetRequestMessage>();
 
   // Target path set
-  target_path = Command::merge_paths(current_path, command.get_path());
+  target_path = Command::merge_paths(current_path, cmd_data.get_path_str());
   request->set_target_path(target_path);
 
 //  std::cout<<command.get_value().to_json(1)<<std::endl;
 //  std::cout<<command.get_value().get_type()<<std::endl;
-  request->set_value(command.get_value());
+  request->set_value(get_Var_from_str(cmd_data.get_value_str()));
 
   // Attribute set
-  auto attr = command.get_attribute();
+  auto attr = cmd_data.get_attribute_str();
   if(!attr.empty()) request->set_attribute_field(attr);
 
   bool is_triggered = false;
@@ -56,6 +56,5 @@ COMMAND_RETURN_TYPE CommandSet::_execute() {
 
 void CommandSet::_clear() {
 }
-
 void CommandSet::_print() {
 }
