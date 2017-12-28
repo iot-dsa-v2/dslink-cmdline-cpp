@@ -32,7 +32,7 @@ COMMAND_RETURN_TYPE CommandInvoke::_execute() {
       },
       std::move(invoke_req));
 
-  Command::wait_for_bool(2000, [&]()->bool{return is_triggered;});
+  Command::wait_for_bool([&]()->bool{return is_triggered;});
   inv->destroy();
 
   if(is_triggered){

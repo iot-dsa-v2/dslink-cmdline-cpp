@@ -39,7 +39,7 @@ COMMAND_RETURN_TYPE CommandSet::_execute() {
         print();
       }, copy_ref_(request));
 
-  Command::wait_for_bool(2000, [&]()->bool{return is_triggered;});
+  Command::wait_for_bool([&]()->bool{return is_triggered;});
   set->destroy();
 
   if(is_triggered){

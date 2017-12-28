@@ -16,17 +16,20 @@
 using namespace dsa;
 
 class Command {
+ private:
+  COMMAND_RETURN_TYPE return_type;
+
  protected:
   command_data cmd_data;
   MessageStatus status;
 
   boost::mutex print_mutex;
 
-  virtual void _clear() {};
   virtual std::vector<int> _available_args_num_options() {return {};};
-  virtual void _print() {};
   virtual void _print_usage_info() {};
   virtual COMMAND_RETURN_TYPE _execute() {return COMMAND_RETURN_CONTINUE;};
+  virtual void _clear() {};
+  virtual void _print() {};
 
   void print();
   void print_usage_info();
@@ -37,8 +40,10 @@ class Command {
   virtual ~Command(){};
 
  public:
-  COMMAND_RETURN_TYPE execute();
+  void execute();
   void clear();
+
+  COMMAND_RETURN_TYPE get_return_type(){return return_type;}
 
   static std::string current_path;
   static ref_<DsLink> link;
@@ -46,7 +51,7 @@ class Command {
 
   static Var get_Var_from_str(const std::string str);
   static std::string merge_paths(const std::string &first, const std::string &second);
-  static int wait_for_bool(int wait_time, const std::function<bool()>& callback);
+  static int wait_for_bool(const std::function<bool()>& callback);
 };
 
 #endif //CMDLINE_DSLINK_COMMAND_H

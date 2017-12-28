@@ -24,7 +24,7 @@ COMMAND_RETURN_TYPE CommandCD::_execute() {
         is_triggered = true;
       });
 
-  Command::wait_for_bool(2000, [&]()->bool{return is_triggered;});
+  Command::wait_for_bool([&]()->bool{return is_triggered;});
   if(is_triggered && status == MessageStatus::OK){
     std::cout<<"Current directory will changing to : "<<target_path;
     if(target_path.size() == 0)
@@ -43,5 +43,6 @@ COMMAND_RETURN_TYPE CommandCD::_execute() {
 
 void CommandCD::_clear() {
 }
+
 void CommandCD::_print() {
 }

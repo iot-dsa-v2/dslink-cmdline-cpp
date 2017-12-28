@@ -40,18 +40,18 @@ bool CmdLine::get_input() {
   auto cmd = command_factory.get_command(line_str);
 
   // 3. Execute Command
-  auto return_ = cmd->execute();
+  cmd->execute();
 
-  // 4. If command says quit, we quit if continue we will
-  if(return_ == COMMAND_RETURN_TERMINATE) return false;
-  if(return_ == COMMAND_RETURN_CONTINUE) return true;
+  auto return_ = cmd->get_return_type();
 
-  // 5. Command says we need wait he was executing
-  while (std::cin.get() != '\n'){}
+  // 4. Command says we need wait he was executing
+  if(return_ == COMMAND_RETURN_WAIT) {
+    while (std::cin.get() != '\n') {}
+  }
 
-  // 6. Clear
+  // 5. Clear
   cmd->clear();
 
-  return true;
+  return return_ != COMMAND_RETURN_TERMINATE;
 }
 

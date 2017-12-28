@@ -6,11 +6,13 @@
 
 std::string Command::current_path = "";
 ref_<DsLink> Command::link = nullptr;
+int Command::timeout_in_ms = 2000;
 
 Command::Command(const command_data cmd_data) {
   this->cmd_data = cmd_data;
+  // default is continue
+  return_type = COMMAND_RETURN_CONTINUE;
 }
-
 
 void Command::print_usage_info() {
   std::cout<<"Printing Usage Info..."<<std::endl;
@@ -30,13 +32,13 @@ void Command::print() {
 }
 
 
-COMMAND_RETURN_TYPE Command::execute() {
-  // First check command
+void Command::execute() {
+  // check command
   if(cmd_data.token_error){
-    std::cout<<"\nThere is an error on tokenize.\n"<<std::endl;
+    std::cout<<"\nThere is an error on tokenizer.\n"<<std::endl;
     print_usage_info();
     std::cout<<"\n"<<std::endl;
-    return COMMAND_RETURN_CONTINUE;
+    return;
   }
 
   // Check argument number is valid
@@ -48,21 +50,21 @@ COMMAND_RETURN_TYPE Command::execute() {
       std::cout << "\nThere is an error on argument numbers.\n" << std::endl;
       print_usage_info();
       std::cout << "\n" << std::endl;
-      return COMMAND_RETURN_CONTINUE;
+      return;
     }
   }
 
   try{
-    return _execute();
+    return_type = _execute();
+    return;
   }catch(std::exception &e){
     std::cout<<e.what()<<std::endl;
     print_usage_info();
-    return COMMAND_RETURN_CONTINUE;
+    return;
   }
 }
 
 void Command::clear() {
-  std::cout<<"Exiting from stream..."<<std::endl;
   _clear();
 }
 
@@ -97,7 +99,8 @@ std::string Command::merge_paths(const std::string &first_, const std::string &s
     auto current = total_path_div[0];
     total_path_div.erase(total_path_div.begin());
 
-    if(current.compare("..") == 0){
+    if(current.compare(".") == 0){}
+    else if(current.compare("..") == 0){
       if(!total_path_filtered.empty())
         total_path_filtered.pop_back();
     }
@@ -119,7 +122,8 @@ std::string Command::merge_paths(const std::string &first_, const std::string &s
 }
 
 const int SLEEP_INTERVAL = 10;
-int Command::wait_for_bool(int wait_time, const std::function<bool()> &callback) {
+int Command::wait_for_bool(const std::function<bool()> &callback) {
+  int wait_time = timeout_in_ms;
   int waited = 0;
   while (waited < wait_time) {
     if (callback()) {
