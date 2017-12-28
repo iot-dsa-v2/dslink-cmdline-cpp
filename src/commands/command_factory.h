@@ -18,9 +18,8 @@ using namespace dsa;
   public:
    CommandFactory();
 
-   std::shared_ptr<Command> get_command(std::string _line,
-                                        std::string current_path,
-                                        ref_<DsLink> link);
+   std::shared_ptr<Command> get_command(std::string _line);
+
   private:
    command_str tokenize(std::string _line);
 

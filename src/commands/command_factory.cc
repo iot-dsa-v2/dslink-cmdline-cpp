@@ -90,26 +90,25 @@ command_str CommandFactory::tokenize(std::string _line) {
   return std::move(cmd);
 }
 
-std::shared_ptr<Command> CommandFactory::get_command(
-    std::string _line, std::string current_path, ref_<DsLink> link) {
+std::shared_ptr<Command> CommandFactory::get_command(std::string _line) {
 
   auto command_str = tokenize(_line);
 
   switch (command_str.type){
     case COMMAND_QUIT:
-      return make_shared_<CommandQuit>(command_str, current_path, link);
+      return make_shared_<CommandQuit>(command_str);
     case COMMAND_CD:
-      return make_shared_<CommandCD>(command_str, current_path, link);
+      return make_shared_<CommandCD>(command_str);
     case COMMAND_LIST:
-      return make_shared_<CommandList>(command_str, current_path, link);
+      return make_shared_<CommandList>(command_str);
     case COMMAND_SUBSCRIBE:
-      return make_shared_<CommandSubscribe>(command_str, current_path, link);
+      return make_shared_<CommandSubscribe>(command_str);
     case COMMAND_INVOKE:
-      return make_shared_<CommandInvoke>(command_str, current_path, link);
+      return make_shared_<CommandInvoke>(command_str);
     case COMMAND_SET:
-      return make_shared_<CommandSet>(command_str, current_path, link);
+      return make_shared_<CommandSet>(command_str);
   }
 
-  return make_shared_<CommandUnknown>(command_str, current_path, link);
+  return make_shared_<CommandUnknown>(command_str);
 }
 

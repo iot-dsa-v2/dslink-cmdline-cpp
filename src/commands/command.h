@@ -82,13 +82,9 @@ using namespace dsa;
 class Command {
  protected:
   command_str command;
-  std::string current_path;
-
-  ref_<DsLink> link;
+  MessageStatus status;
 
   boost::mutex print_mutex;
-
-  MessageStatus status;
 
   virtual void _clear() {};
   virtual void _print() {};
@@ -99,9 +95,7 @@ class Command {
   void print_usage_info();
 
  public:
-  Command(const command_str command,
-          const std::string current_path,
-          const ref_<DsLink> link);
+  Command(const command_str command);
 
   virtual ~Command(){};
 
@@ -109,7 +103,9 @@ class Command {
   COMMAND_RETURN_TYPE execute();
   void clear();
 
-  std::string get_current_path();
+  static std::string current_path;
+  static ref_<DsLink> link;
+  static int timeout;
 
   static std::string merge_paths(const std::string &first, const std::string &second);
   static int wait_for_bool(int wait_time, const std::function<bool()>& callback);

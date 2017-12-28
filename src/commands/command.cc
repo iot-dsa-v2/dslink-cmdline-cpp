@@ -3,12 +3,11 @@
 #include <boost/algorithm/string/classification.hpp>
 #include "command.h"
 
-Command::Command(const command_str command,
-                 const std::string current_path,
-                 const ref_<DsLink> link) {
+std::string Command::current_path = "";
+ref_<DsLink> Command::link = nullptr;
+
+Command::Command(const command_str command) {
   this->command = command;
-  this->current_path = current_path;
-  this->link = link;
 }
 
 
@@ -116,8 +115,4 @@ int Command::wait_for_bool(int wait_time, const std::function<bool()> &callback)
     waited += SLEEP_INTERVAL;
   }
   return -1;
-}
-
-std::string Command::get_current_path() {
-  return current_path;
 }

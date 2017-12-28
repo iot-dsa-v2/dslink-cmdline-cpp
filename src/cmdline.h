@@ -22,7 +22,6 @@ class CmdLine {
  private:
   std::shared_ptr<App> app;
   ref_<DsLink> link;
-  std::string current_path;
   CommandFactory command_factory;
 
   std::unique_ptr<boost::asio::io_service::strand> strand;
