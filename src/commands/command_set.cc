@@ -29,7 +29,7 @@ COMMAND_RETURN_TYPE CommandSet::_execute() {
 
   bool is_triggered = false;
 
-  auto set_str = link->set(
+  auto set = link->set(
       [&](IncomingSetStream& stream, ref_<const SetResponseMessage> message) {
         print_mutex.lock();
         is_triggered = true;
@@ -40,13 +40,13 @@ COMMAND_RETURN_TYPE CommandSet::_execute() {
       }, copy_ref_(request));
 
   Command::wait_for_bool(2000, [&]()->bool{return is_triggered;});
-  set_str->destroy();
+  set->destroy();
 
   if(is_triggered){
     if(message->get_body() != nullptr)
       message->print_message(std::cout, 0);
     else
-      std::cout<<"Body return null, probably you wanted to subscribe invalid path";
+      std::cout<<"Body return null, probably you wanted to set on invalid path";
   }else{
     std::cout<<"not triggered, server does not gives any sound.";
   }

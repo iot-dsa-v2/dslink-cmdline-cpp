@@ -4,8 +4,12 @@
 
 #include "command.h"
 
+#include "message/response/invoke_response_message.h"
+
 class CommandInvoke: public Command {
  private:
+  ref_<const InvokeResponseMessage> message;
+  std::string target_path;
 
  public:
   using Command::Command;
