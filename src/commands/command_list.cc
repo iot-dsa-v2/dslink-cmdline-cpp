@@ -1,10 +1,9 @@
 
 #include "command_list.h"
 
-CommandList::CommandList(const command_str &command,
-                         const std::string &current_path,
-                         const ref_<DsLink> &link):
-    Command(command, current_path, link) {}
+void CommandList::_print_usage_info() {
+  std::cout<<"Printing list usage info"<<std::endl;
+}
 
 COMMAND_RETURN_TYPE CommandList::_execute() {
   if(command.num_args() > 1){
@@ -25,10 +24,6 @@ COMMAND_RETURN_TYPE CommandList::_execute() {
       });
 
   return COMMAND_RETURN_WAIT;
-}
-
-void CommandList::_print_usage_info() {
-  std::cout<<"Printing list usage info"<<std::endl;
 }
 
 void CommandList::_clear() {

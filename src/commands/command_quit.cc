@@ -1,14 +1,6 @@
 
 #include "command_quit.h"
 
-CommandQuit::CommandQuit(const command_str &command,
-                         const std::string &current_path,
-                         const ref_<DsLink> &link)
-    : Command(command, current_path, link) {}
-
-void CommandQuit::_print() {
-
-}
 
 void CommandQuit::_print_usage_info() {
   std::cout<<"Just type 'quit'..."<<std::endl;
@@ -26,5 +18,9 @@ COMMAND_RETURN_TYPE CommandQuit::_execute() {
 }
 
 void CommandQuit::_clear() {
+
+}
+
+void CommandQuit::_print() {
 
 }

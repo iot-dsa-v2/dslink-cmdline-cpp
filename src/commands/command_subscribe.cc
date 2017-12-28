@@ -2,21 +2,8 @@
 #include "command_subscribe.h"
 
 
-CommandSubscribe::CommandSubscribe(const command_str &command,
-                 const std::string &current_path,
-                 const ref_<DsLink> &link):
-    Command(command, current_path, link) {}
-
-
 void CommandSubscribe::_print_usage_info() {
   std::cout<<"Printing subscribe usage info"<<std::endl;
-}
-
-void CommandSubscribe::_clear() {
-  if(incoming_subscribe_cache != nullptr){
-    incoming_subscribe_cache->destroy();
-    incoming_subscribe_cache.reset();
-  }
 }
 
 COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
@@ -43,6 +30,13 @@ COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
       update_options);
 
   return COMMAND_RETURN_WAIT;
+}
+
+void CommandSubscribe::_clear() {
+  if(incoming_subscribe_cache != nullptr){
+    incoming_subscribe_cache->destroy();
+    incoming_subscribe_cache.reset();
+  }
 }
 
 void CommandSubscribe::_print() {

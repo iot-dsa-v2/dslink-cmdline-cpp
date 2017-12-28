@@ -14,7 +14,7 @@ using namespace dsa;
 
 ref_<DsLink> cmd_link;
 
-bool connect_dslink(int argc, char *argv[], std::shared_ptr<App> app) {
+bool connect_dslink(int argc, const char* argv[], std::shared_ptr<App> app) {
   cmd_link = make_ref_<DsLink>(argc, argv, "cmd-dslink", "1.0.0", app);
   cmd_link->init_responder();
 
@@ -37,12 +37,15 @@ bool connect_dslink(int argc, char *argv[], std::shared_ptr<App> app) {
   return true;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, const char* argv[]) {
 
   auto app = std::make_shared<App>();
 
   // Connect to the broker
-  if(!connect_dslink(argc, argv, app)) return 1;
+  if(!connect_dslink(argc, argv, app)) {
+    cmd_link->destroy();
+    return 1;
+  }
 
   auto cmdline = CmdLine(app, cmd_link);
   cmdline.run();

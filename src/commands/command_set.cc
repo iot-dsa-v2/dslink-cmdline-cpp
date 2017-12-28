@@ -3,21 +3,8 @@
 #include "message/request/set_request_message.h"
 #include "stream/requester/incoming_set_stream.h"
 
-CommandSet::CommandSet(const command_str &command,
-                       const std::string &current_path,
-                       const ref_<DsLink> &link):
-    Command(command, current_path, link) {}
-
-
-
 void CommandSet::_print_usage_info() {
   std::cout<<"Printing set usage info"<<std::endl;
-}
-void CommandSet::_clear() {
-
-}
-void CommandSet::_print() {
-
 }
 
 COMMAND_RETURN_TYPE CommandSet::_execute() {
@@ -65,4 +52,10 @@ COMMAND_RETURN_TYPE CommandSet::_execute() {
   }
 
   return COMMAND_RETURN_CONTINUE;
+}
+
+void CommandSet::_clear() {
+}
+
+void CommandSet::_print() {
 }

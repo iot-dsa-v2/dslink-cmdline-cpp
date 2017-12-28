@@ -5,23 +5,15 @@
 #include "command.h"
 
 class CommandUnknown: public Command {
-
+ private:
  public:
-  CommandUnknown(const command_str &command,
-                 const std::string &current_path,
-                 const ref_<DsLink> &link);
+  using Command::Command;
 
  protected:
-
-  void _print() override;
-
   void _print_usage_info() override;
-
   COMMAND_RETURN_TYPE _execute() override;
-
   void _clear() override;
-
-
+  void _print() override;
 };
 
 #endif //CMDLINE_DSLINK_COMMAND_UNKNOWN_H

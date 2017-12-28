@@ -98,6 +98,7 @@ class Command {
   void print();
   void print_usage_info();
 
+ public:
   Command(const command_str command,
           const std::string current_path,
           const ref_<DsLink> link);

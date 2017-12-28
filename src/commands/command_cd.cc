@@ -1,14 +1,6 @@
 
 #include "command_cd.h"
 
-CommandCD::CommandCD(const command_str &command,
-                     const std::string &current_path,
-                     const ref_<DsLink> &link):
-    Command(command, current_path, link) {}
-
-void CommandCD::_print() {
-}
-
 void CommandCD::_print_usage_info() {
   std::cout<<"Printing cd usage info"<<std::endl;
 }
@@ -30,7 +22,7 @@ COMMAND_RETURN_TYPE CommandCD::_execute() {
       [&](IncomingListCache &cache, const std::vector<string_> &str) {
         this->status = cache.get_status();
         is_triggered = true;
-        });
+      });
 
   Command::wait_for_bool(2000, [&]()->bool{return is_triggered;});
   if(is_triggered && status == MessageStatus::OK){
@@ -50,4 +42,7 @@ COMMAND_RETURN_TYPE CommandCD::_execute() {
 }
 
 void CommandCD::_clear() {
+}
+
+void CommandCD::_print() {
 }
