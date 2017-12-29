@@ -4,6 +4,9 @@
 #include "command.h"
 #include "message/base_message.h"
 
+#include "dsa_common.h"
+#include <module/default/console_logger.h>
+
 std::string Command::current_path = "";
 ref_<DsLink> Command::link = nullptr;
 int Command::timeout_in_ms = 1000;
@@ -61,6 +64,11 @@ void Command::execute() {
     }
   }
 
+  //Debug?
+  if(cmd_data.is_debug){
+    static_cast<ConsoleLogger &>(link->strand->logger()).level = Logger::ALL___;
+  }
+
   try{
     return_type = _execute();
     if(return_type == COMMAND_RETURN_WAIT){
@@ -76,6 +84,10 @@ void Command::execute() {
 
 void Command::clear() {
   _clear();
+  // Debug?
+  if(cmd_data.is_debug){
+    static_cast<ConsoleLogger &>(link->strand->logger()).level = Logger::NONE__;
+  }
 }
 
 void Command::print_message(const ref_<const ResponseMessage> message){
