@@ -7,6 +7,8 @@ class CommandCD: public Command {
  private:
   std::string target_path;
 
+  ref_<IncomingListCache> cache;
+
  public:
   using Command::Command;
 

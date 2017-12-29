@@ -2,16 +2,18 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include "command.h"
-
+#include "message/base_message.h"
 
 std::string Command::current_path = "";
 ref_<DsLink> Command::link = nullptr;
-int Command::timeout_in_ms = 2000;
+int Command::timeout_in_ms = 1000;
 
 Command::Command(const command_data cmd_data) {
   this->cmd_data = cmd_data;
   // default is continue
   return_type = COMMAND_RETURN_CONTINUE;
+  // default is false
+  invoked = true;
 }
 
 void Command::print_usage_info() {
@@ -21,23 +23,29 @@ void Command::print_usage_info() {
 }
 
 void Command::print() {
-  // clear screen
-  for(int i = 0; i < 100; i++) std::cout<<std::endl;
+  set_invoked();
+
+  // clear screen is stream
+  if(cmd_data.is_stream){
+    for(int i = 0; i < 100; i++) std::cout<<std::endl;
+  }
 
   print_mutex.lock();
-  //std::cout<< "Message Status : "<<status<<std::endl;
   _print();
   print_mutex.unlock();
-  std::cout<< "Press enter to continue..."<<std::endl;
+
+  // inform user how he can close stream
+  if(cmd_data.is_stream){
+    std::cout<<cmdlog::stream<< "Press enter to cancel stream..."<<std::endl;
+  }
 }
 
 
 void Command::execute() {
   // check command
   if(cmd_data.token_error){
-    std::cout<<"\nThere is an error on tokenizer.\n"<<std::endl;
+    std::cout<<cmdlog::error<<"There is an error on tokenizer."<<cmdlog::endl;
     print_usage_info();
-    std::cout<<"\n"<<std::endl;
     return;
   }
 
@@ -47,9 +55,8 @@ void Command::execute() {
     auto provid_arg = cmd_data.args.size();
 
     if (std::find(avaib_args.begin(), avaib_args.end(), provid_arg) == avaib_args.end()) {
-      std::cout << "\nThere is an error on argument numbers.\n" << std::endl;
+      std::cout<<cmdlog::error<<"There is an error on argument numbers."<<cmdlog::endl;
       print_usage_info();
-      std::cout << "\n" << std::endl;
       return;
     }
   }
@@ -66,6 +73,14 @@ void Command::execute() {
 
 void Command::clear() {
   _clear();
+}
+
+void Command::print_message(const ref_<const ResponseMessage> message){
+  if(message->get_body() != nullptr)
+    message->print_message(std::cout, 0);
+  else
+    std::cout<<"Body return null, probably you wanted to subscribe invalid path";
+  std::cout<<std::endl;
 }
 
 std::string Command::merge_paths(const std::string &first_, const std::string &second_) {

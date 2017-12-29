@@ -27,34 +27,25 @@ COMMAND_RETURN_TYPE CommandSet::_execute() {
   auto attr = cmd_data.get_attribute_str();
   if(!attr.empty()) request->set_attribute_field(attr);
 
-  bool is_triggered = false;
-
-  auto set = link->set(
+  set_invokable();
+  stream = link->set(
       [&](IncomingSetStream& stream, ref_<const SetResponseMessage> message) {
         print_mutex.lock();
-        is_triggered = true;
         this->message = message;
         this->status = message->get_status();
         print_mutex.unlock();
         print();
       }, copy_ref_(request));
 
-  Command::wait_for_bool([&]()->bool{return is_triggered;});
-  set->destroy();
-
-  if(is_triggered){
-    if(message->get_body() != nullptr)
-      message->print_message(std::cout, 0);
-    else
-      std::cout<<"Body return null, probably you wanted to set on invalid path";
-  }else{
-    std::cout<<"not triggered, server does not gives any sound.";
-  }
-
   return COMMAND_RETURN_CONTINUE;
 }
 
 void CommandSet::_clear() {
+  if(stream != nullptr){
+    stream->destroy();
+  }
 }
+
 void CommandSet::_print() {
+  print_message(message);
 }

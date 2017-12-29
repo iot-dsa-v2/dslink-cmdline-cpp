@@ -16,33 +16,32 @@ COMMAND_RETURN_TYPE CommandCD::_execute() {
   else
     target_path = std::string("");
 
-  bool is_triggered = false;
-  auto incoming_cache = link->list(
+  set_invokable();
+  cache = link->list(
       target_path.c_str(),
       [&](IncomingListCache &cache, const std::vector<string_> &str) {
+        print_mutex.lock();
         this->status = cache.get_status();
-        is_triggered = true;
+        print_mutex.unlock();
+        print();
       });
-
-  Command::wait_for_bool([&]()->bool{return is_triggered;});
-  if(is_triggered && status == MessageStatus::OK){
-    std::cout<<"Current directory will changing to : "<<target_path;
-    if(target_path.size() == 0)
-      std::cout<<"root";
-    std::cout<<std::endl;
-    current_path = target_path;
-  }
-  else{
-    std::cout<<"Current directory Can NOT changing to : "<<target_path<<", it is invalid"<<std::endl;
-  }
-
-  incoming_cache->destroy();
 
   return COMMAND_RETURN_CONTINUE;
 }
 
 void CommandCD::_clear() {
+  if(cache != nullptr){
+    cache->destroy();
+  }
 }
 
 void CommandCD::_print() {
+  if(status == MessageStatus::OK) {
+    current_path = target_path;
+  }
+  else{
+    std::cout<< cmdlog::error<<"Failed to change path to "
+             << cmdlog::path<<target_path<<cmdlog::reset
+             << " maybe it is invalid"<<std::endl;
+  }
 }

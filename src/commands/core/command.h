@@ -12,12 +12,16 @@
 #include "dslink.h"
 #include "command_data.h"
 
+#include "utils/cmdlog.h"
+
 
 using namespace dsa;
 
 class Command {
  private:
   COMMAND_RETURN_TYPE return_type;
+
+  bool invoked;
 
  protected:
   command_data cmd_data;
@@ -33,6 +37,8 @@ class Command {
 
   void print();
   void print_usage_info();
+  void set_invoked() {invoked = true;}
+  void set_invokable() {invoked = false;}
 
  public:
   Command(const command_data cmd_data);
@@ -43,12 +49,15 @@ class Command {
   void execute();
   void clear();
 
+  bool is_invoked() {return invoked;}
+
   COMMAND_RETURN_TYPE get_return_type(){return return_type;}
 
   static std::string current_path;
   static ref_<DsLink> link;
   static int timeout_in_ms;
 
+  static void print_message(const ref_<const ResponseMessage> message);
   static Var get_Var_from_str(const std::string str);
   static std::string merge_paths(const std::string &first, const std::string &second);
   static int wait_for_bool(const std::function<bool()>& callback);

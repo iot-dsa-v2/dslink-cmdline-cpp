@@ -7,6 +7,8 @@
 
 class CommandSet : public Command {
  private:
+  ref_<IncomingSetStream> stream;
+
   ref_<const SetResponseMessage> message;
   std::string target_path;
 

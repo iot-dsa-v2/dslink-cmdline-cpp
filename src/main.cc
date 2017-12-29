@@ -9,6 +9,8 @@
 
 #include "cmdline.h"
 
+#include "utils/cmdlog.h"
+
 
 using namespace dsa;
 
@@ -28,14 +30,15 @@ bool connect_dslink(int argc, const char* argv[], std::shared_ptr<App> app) {
 
   boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
   if(!is_connected){
-    std::cout<<"cannot connect to the broker!"<<std::endl;
+    std::cout<<cmdlog::error<<"cannot connect to the broker! Be sure if you give broker address in parameters."<<std::endl;
     return false;
   }
 
-  std::cout<<"\n cmd-dslink is connected, you can go for it!\n"<<std::endl;
+  std::cout<<cmdlog::success<<"cmd-dslink is connected, you can go for it!"<<cmdlog::endl;
 
   return true;
 }
+
 
 int main(int argc, const char* argv[]) {
 
@@ -52,3 +55,15 @@ int main(int argc, const char* argv[]) {
 
   return 0;
 }
+
+//#include "utils/cmdlog.h"
+//
+//int main(int argc, const char* argv[]) {
+//  std::cout<<cmdlog::success<<"This is success message"<<cmdlog::endl;
+//  std::cout<<cmdlog::error<<"This is error message"<<cmdlog::endl;
+//  std::cout<<cmdlog::info<<"Listing path : "<<cmdlog::reset<<cmdlog::path<<"downstream"<<cmdlog::endl;
+//  std::cout<<cmdlog::var<<"{\n 'mert' : 5 \n}"<<cmdlog::endl;
+//  std::cout<<cmdlog::stream<<"Press enter to cancel the stream..."<<cmdlog::endl;
+//  std::cout<<cmdlog::path<<"> downstream/mylink"<<cmdlog::endl;
+//
+//}

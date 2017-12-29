@@ -17,6 +17,7 @@ COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
   update_options.queue_duration = 0x9876;
   update_options.queue_size = 0x5432;
 
+  set_invokable();
   incoming_subscribe_cache = link->subscribe(
       target_path.c_str(),
       [&](IncomingSubscribeCache &cache, ref_<const SubscribeResponseMessage> message) {
@@ -29,7 +30,9 @@ COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
       },
       update_options);
 
-  return COMMAND_RETURN_WAIT;
+  if(cmd_data.is_stream) return COMMAND_RETURN_WAIT;
+
+  return COMMAND_RETURN_CONTINUE;
 }
 
 void CommandSubscribe::_clear() {
@@ -39,11 +42,13 @@ void CommandSubscribe::_clear() {
   }
 }
 void CommandSubscribe::_print() {
-  std::cout<<"Subscribe message from path : "<<target_path<<std::endl;
-  if(message->get_body() != nullptr)
-    message->print_message(std::cout, 0);
-  else
-    std::cout<<"Body return null, probably you wanted to subscribe invalid path";
-  std::cout<<std::endl;
+  std::cout<<cmdlog::info<<"Printing subscribe message from path : "
+           <<cmdlog::path<<target_path<<std::endl;
+
+  std::cout<<cmdlog::var;
+//  std::cout<<message->get_value().meta.to_json(0)<<std::endl;
+//  std::cout<<message->get_value().value.to_json(0)<<std::endl;
+  print_message(message);
+  std::cout<<cmdlog::reset;
 }
 

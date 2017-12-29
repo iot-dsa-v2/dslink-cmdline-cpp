@@ -8,6 +8,7 @@
 
 class CommandInvoke: public Command {
  private:
+  ref_<IncomingInvokeStream> stream;
   ref_<const InvokeResponseMessage> message;
   std::string target_path;
 
