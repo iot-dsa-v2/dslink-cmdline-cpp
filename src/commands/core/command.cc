@@ -11,6 +11,9 @@ std::string Command::current_path = "";
 ref_<DsLink> Command::link = nullptr;
 int Command::timeout_in_ms = 1000;
 
+std::map<std::string, std::string> Command::file_txts = std::map<std::string, std::string>();
+std::map<std::string, std::string> Command::file_bins = std::map<std::string, std::string>();
+
 Command::Command(const command_data cmd_data) {
   this->cmd_data = cmd_data;
   // default is continue
@@ -165,9 +168,55 @@ int Command::wait_for_bool(const std::function<bool()> &callback) {
   return -1;
 }
 
-Var Command::get_Var_from_str(const std::string str) {
-  if (str.size() == 0)
+#include <boost/algorithm/string.hpp>
+#include <string>
+#include <fstream>
+#include <streambuf>
+
+Var Command::get_Var_from_str(const std::string str_) {
+  if (str_.size() == 0)
     throw std::runtime_error("str is null for turning into VAR ");
+
+  auto str = str_;
+
+  // PLACEHOLDER TO VARS
+  for(auto v:file_txts){
+    auto t = "'" + v.first + "'";
+    if(boost::find_first(str, t)){
+      auto file_path = v.second;
+      // TEXT READ
+      std::ifstream f(file_path);
+      if(!f.is_open()){
+        throw std::runtime_error("file does not exists");
+      }
+      std::string str_from_file
+          ((std::istreambuf_iterator<char>(f)),
+           std::istreambuf_iterator<char>());
+
+      boost::replace_all(str, t, str_from_file);
+    }
+  }
+
+  for(auto v:file_bins){
+    auto t = "'" + v.first + "'";
+    if(boost::find_first(str, t)){
+      auto file_path = v.second;
+      // BIN READ
+      std::ifstream f(file_path, std::ios::binary );
+      if(!f.is_open()){
+        throw std::runtime_error("file does not exists");
+      }
+      // copies all data into buffer
+      std::vector<char> buffer((std::istreambuf_iterator<char>(f)), (std::istreambuf_iterator<char>()));
+      auto v = Var((uint8_t *)buffer.data(), buffer.size());
+      auto str_from_file = v.to_json(0);
+
+      std::cout<<str_from_file<<std::endl;
+
+      boost::replace_all(str, t, str_from_file);
+    }
+  }
+
 
   // It is a hack for reading value in json
   try {

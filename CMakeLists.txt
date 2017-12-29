@@ -56,6 +56,8 @@ add_executable(cmdline_dslink
         src/commands/command_cd.cc
         src/commands/command_set.cc
         src/commands/command_timeout.cc
+        src/commands/command_file.cc
+        src/commands/command_filelist.cc
         src/commands/command_invoke.cc
         src/commands/command_subscribe.cc
         src/commands/command_quit.cc)

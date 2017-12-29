@@ -56,6 +56,8 @@ class Command {
   static std::string current_path;
   static ref_<DsLink> link;
   static int timeout_in_ms;
+  static std::map<std::string, std::string> file_txts;
+  static std::map<std::string, std::string> file_bins;
 
   static void print_message(const ref_<const ResponseMessage> message);
   static Var get_Var_from_str(const std::string str);
