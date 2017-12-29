@@ -11,7 +11,7 @@ void CommandQuit::_print_usage_info() {
 }
 
 COMMAND_RETURN_TYPE CommandQuit::_execute() {
-  print();
+  std::cout<<cmdlog::info<<"Quiting..."<<cmdlog::endl;
   return COMMAND_RETURN_TERMINATE;
 }
 
@@ -19,5 +19,4 @@ void CommandQuit::_clear() {
 
 }
 void CommandQuit::_print() {
-  std::cout<<cmdlog::info<<"Quiting..."<<cmdlog::endl;
 }

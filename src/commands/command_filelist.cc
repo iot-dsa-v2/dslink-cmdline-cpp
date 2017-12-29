@@ -11,11 +11,6 @@ void CommandFileList::_print_usage_info() {
 }
 
 COMMAND_RETURN_TYPE CommandFileList::_execute() {
-  print();
-
-  return COMMAND_RETURN_CONTINUE;
-}
-void CommandFileList::_print() {
   std::cout<<cmdlog::var<<"TXT files"<<cmdlog::endl;
 
   for(auto a:file_txts){
@@ -32,6 +27,11 @@ void CommandFileList::_print() {
              <<cmdlog::path<<a.first
              <<cmdlog::var<<" : "<<a.second<<cmdlog::endl;
   }
+
+  return COMMAND_RETURN_CONTINUE;
+}
+void CommandFileList::_print() {
+
 }
 
 
