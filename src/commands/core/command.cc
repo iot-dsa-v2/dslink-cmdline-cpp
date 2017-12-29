@@ -63,6 +63,9 @@ void Command::execute() {
 
   try{
     return_type = _execute();
+    if(return_type == COMMAND_RETURN_WAIT){
+      std::cout<<cmdlog::stream<<"We are waiting server to respond..."<<cmdlog::endl;
+    }
     return;
   }catch(std::exception &e){
     std::cout<<e.what()<<std::endl;

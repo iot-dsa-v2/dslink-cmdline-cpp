@@ -65,6 +65,14 @@ bool CmdLine::get_input() {
       while (!cmd->is_invoked() && !kbhit()) {
         boost::this_thread::sleep(boost::posix_time::milliseconds(10));
       }
+      if(cmd->is_invoked()){
+        std::cout<<cmdlog::stream<<"Oh! Server responded, sorry about that"<<cmdlog::endl;
+        std::cout<<cmdlog::stream<<"If you are seeing this message to much.."<<cmdlog::endl;
+        std::cout<<cmdlog::stream<<"...you can increase the timeout by typing 'timeout TimeInMilisec'"<<cmdlog::endl;
+      }
+      else{
+        std::cout<<cmdlog::stream<<"Oh! You are impatient, OK!"<<cmdlog::endl;
+      }
     }
 
   }

@@ -1,4 +1,5 @@
 
+#include <commands/command_timeout.h>
 #include "command_factory.h"
 
 #include "commands/command_unknown.h"
@@ -22,6 +23,7 @@ CommandFactory::CommandFactory() {
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("set", COMMAND_SET));
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("subscribe", COMMAND_SUBSCRIBE));
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("subs", COMMAND_SUBSCRIBE));
+  command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("timeout", COMMAND_TIMEOUT));
 }
 
 std::shared_ptr<Command> CommandFactory::get_command(std::string _line) {
@@ -42,6 +44,8 @@ std::shared_ptr<Command> CommandFactory::get_command(std::string _line) {
       return make_shared_<CommandInvoke>(cmd);
     case COMMAND_SET:
       return make_shared_<CommandSet>(cmd);
+    case COMMAND_TIMEOUT:
+      return make_shared_<CommandTimeout>(cmd);
   }
 
   return make_shared_<CommandUnknown>(cmd);
