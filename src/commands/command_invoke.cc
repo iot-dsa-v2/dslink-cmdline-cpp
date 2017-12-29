@@ -19,7 +19,9 @@ COMMAND_RETURN_TYPE CommandInvoke::_execute() {
   invoke_req->set_target_path(target_path);
 
   if(cmd_data.get_value_str().size() != 0){
-    invoke_req->set_value(get_Var_from_str(cmd_data.get_value_str()));
+    auto v = get_Var_from_str(cmd_data.get_value_str());
+    //std::cout<<cmdlog::var<<v.to_json()<<cmdlog::endl;
+    invoke_req->set_value(v);
   }
 
   set_invokable();

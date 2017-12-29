@@ -50,3 +50,7 @@ Lists all defined placeholders with their filepaths
 ## command: timeout
 Sometimes server don't respond so cmd waits TIMEOUT milisecond and than inform the user about it and gives a chance to cancel it. You can set the time between begining command and asking user to cancel it.
 `timeout 2000` -> sets 2 seconds
+
+## Examples
+`file myzip.zip bin myzip`
+`invoke install_from_zip {"name":"mynewdslink", "zip":'myzip'}`

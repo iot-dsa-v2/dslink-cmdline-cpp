@@ -28,6 +28,42 @@ void Command::print_usage_info() {
   std::cout<<"...Printed Usage Info"<<std::endl;
 }
 
+const char* get_status_str(MessageStatus status)
+{
+  switch(status){
+    case MessageStatus::OK:
+      return "OK";
+    case MessageStatus::INITIALIZING:
+      return "INITIALIZING";
+    case MessageStatus::REFRESHED:
+      return "REFRESHED";
+    case MessageStatus::REFRESHED_INITIALIZING:
+      return "REFRESHED_INITIALIZING";
+    case MessageStatus::NOT_AVAILABLE:
+      return "NOT_AVAILABLE";
+    case MessageStatus::CLOSED:
+      return "CLOSED";
+    case MessageStatus::DISCONNECTED:
+      return "DISCONNECTED";
+    case MessageStatus::PERMISSION_DENIED:
+      return "PERMISSION_DENIED";
+    case MessageStatus::NOT_SUPPORTED:
+      return "NOT_SUPPORTED";
+    case MessageStatus::INVALID_MESSAGE:
+      return "INVALID_MESSAGE";
+    case MessageStatus::INVALID_PARAMETER:
+      return "INVALID_PARAMETER";
+    case MessageStatus::BUSY:
+      return "BUSY";
+    case MessageStatus::ALIAS_LOOP:
+      return "ALIAS_LOOP";
+    case MessageStatus::CONNECTION_ERROR:
+      return "CONNECTION_ERROR";
+    default:
+      return "STR_VERSION_OF_STATUS_IS_NOT_AVAILABLE";
+  }
+}
+
 void Command::print() {
   set_invoked();
 
@@ -37,6 +73,7 @@ void Command::print() {
   }
 
   print_mutex.lock();
+  std::cout<<"Message Status : "<<cmdlog::var<<get_status_str(status)<<cmdlog::endl;
   _print();
   print_mutex.unlock();
 
