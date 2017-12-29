@@ -73,7 +73,8 @@ void Command::print() {
   }
 
   print_mutex.lock();
-  std::cout<<"Message Status : "<<cmdlog::var<<get_status_str(status)<<cmdlog::endl;
+  if(status != MessageStatus::OK)
+    std::cout<<"Message Status : "<<cmdlog::var<<get_status_str(status)<<cmdlog::endl;
   _print();
   print_mutex.unlock();
 
