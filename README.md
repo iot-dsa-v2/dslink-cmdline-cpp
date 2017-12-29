@@ -34,6 +34,10 @@ set a path with given value and optional attribe from server.
 Invoke a path from server.
 `invoke PATH` -> invoke PATH
 `invoke PATH Var` -> invoke PATH with given Var
+## prefix: debug
+When you put in front of any command, system opens logs for dslink for command runtime.
+`debug invoke PATH`
+`debug ls`
 ## command: quit | q | exit
 Stops its link and exits.
 ## command: file
