@@ -211,12 +211,16 @@ Var Command::get_Var_from_str(const std::string str_) {
       auto v = Var((uint8_t *)buffer.data(), buffer.size());
       auto str_from_file = v.to_json(0);
 
-      std::cout<<str_from_file<<std::endl;
-
+      //std::cout<<str_from_file<<std::endl;
       boost::replace_all(str, t, str_from_file);
     }
   }
 
+//  Var v = Var::from_json("{\"var\":" + str + "}");
+//  auto asd = v["var"].get_binary();
+//  for(int i = 0; i < asd.size(); i++)
+//  std::cout<<asd[i];
+//  std::cout<<std::endl;
 
   // It is a hack for reading value in json
   try {
