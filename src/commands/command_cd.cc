@@ -6,7 +6,7 @@ std::vector<int> CommandCD::_available_args_num_options() {
 }
 
 void CommandCD::_print_usage_info() {
-  std::cout<<"Printing cd usage info"<<std::endl;
+  std::cout<<"for going somewhere just write cd DIR or for root just type cd"<<std::endl;
 }
 
 COMMAND_RETURN_TYPE CommandCD::_execute() {

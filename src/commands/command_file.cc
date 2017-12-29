@@ -10,7 +10,7 @@ std::vector<int> CommandFile::_available_args_num_options() {
 }
 
 void CommandFile::_print_usage_info() {
-  std::cout<<"loadtxt usage info"<<std::endl;
+  std::cout<<"file FILEPATH txt|bin ATTR_NAME"<<std::endl;
 }
 
 COMMAND_RETURN_TYPE CommandFile::_execute() {
