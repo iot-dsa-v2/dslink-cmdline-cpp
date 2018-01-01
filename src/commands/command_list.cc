@@ -38,7 +38,8 @@ void CommandList::_clear() {
 void CommandList::_print() {
   auto map = cache.get_map();
 
-  //std::cout<<cmdlog::info<<"Listing path : "<<cmdlog::reset<<cmdlog::path<<target_path<<cmdlog::endl;
-
-  std::cout<<cmdlog::var<<Var(new VarMap(map)).to_json(1)<<cmdlog::endl;
+  if(status == MessageStatus::OK)
+    std::cout<<cmdlog::var<<Var(new VarMap(map)).to_json(1)<<cmdlog::endl;
+  else
+    std::cout<<cmdlog::var<<"Message Status : "<<get_status_str(status)<<cmdlog::endl;
 }
