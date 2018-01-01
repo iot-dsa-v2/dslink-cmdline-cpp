@@ -63,6 +63,8 @@ class Command {
   static Var get_Var_from_str(const std::string str);
   static std::string merge_paths(const std::string &first, const std::string &second);
   static int wait_for_bool(const std::function<bool()>& callback);
+
+  static const char* get_status_str(MessageStatus status);
 };
 
 #endif //CMDLINE_DSLINK_COMMAND_H

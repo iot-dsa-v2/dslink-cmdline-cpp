@@ -44,11 +44,6 @@ void CommandSubscribe::_clear() {
 void CommandSubscribe::_print() {
   std::cout<<cmdlog::info<<"Printing subscribe message from path : "
            <<cmdlog::path<<target_path<<std::endl;
-
-  std::cout<<cmdlog::var;
-//  std::cout<<message->get_value().meta.to_json(0)<<std::endl;
-//  std::cout<<message->get_value().value.to_json(0)<<std::endl;
   print_message(message);
-  std::cout<<cmdlog::reset;
 }
 

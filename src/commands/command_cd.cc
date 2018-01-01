@@ -42,6 +42,7 @@ void CommandCD::_print() {
   else{
     std::cout<< cmdlog::error<<"Failed to change path to "
              << cmdlog::path<<target_path<<cmdlog::reset
-             << " maybe it is invalid"<<std::endl;
+             << " maybe it is invalid, message status : "
+             <<get_status_str(status)<<std::endl;
   }
 }

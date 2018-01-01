@@ -28,41 +28,6 @@ void Command::print_usage_info() {
   std::cout<<"...Printed Usage Info"<<std::endl;
 }
 
-const char* get_status_str(MessageStatus status)
-{
-  switch(status){
-    case MessageStatus::OK:
-      return "OK";
-    case MessageStatus::INITIALIZING:
-      return "INITIALIZING";
-    case MessageStatus::REFRESHED:
-      return "REFRESHED";
-    case MessageStatus::REFRESHED_INITIALIZING:
-      return "REFRESHED_INITIALIZING";
-    case MessageStatus::NOT_AVAILABLE:
-      return "NOT_AVAILABLE";
-    case MessageStatus::CLOSED:
-      return "CLOSED";
-    case MessageStatus::DISCONNECTED:
-      return "DISCONNECTED";
-    case MessageStatus::PERMISSION_DENIED:
-      return "PERMISSION_DENIED";
-    case MessageStatus::NOT_SUPPORTED:
-      return "NOT_SUPPORTED";
-    case MessageStatus::INVALID_MESSAGE:
-      return "INVALID_MESSAGE";
-    case MessageStatus::INVALID_PARAMETER:
-      return "INVALID_PARAMETER";
-    case MessageStatus::BUSY:
-      return "BUSY";
-    case MessageStatus::ALIAS_LOOP:
-      return "ALIAS_LOOP";
-    case MessageStatus::CONNECTION_ERROR:
-      return "CONNECTION_ERROR";
-    default:
-      return "STR_VERSION_OF_STATUS_IS_NOT_AVAILABLE";
-  }
-}
 
 void Command::print() {
   set_invoked();
@@ -73,8 +38,6 @@ void Command::print() {
   }
 
   print_mutex.lock();
-  if(status != MessageStatus::OK)
-    std::cout<<"Message Status : "<<cmdlog::var<<get_status_str(status)<<cmdlog::endl;
   _print();
   print_mutex.unlock();
 
@@ -131,12 +94,52 @@ void Command::clear() {
   }
 }
 
+const char* Command::get_status_str(MessageStatus status)
+{
+  switch(status){
+    case MessageStatus::OK:
+      return "OK";
+    case MessageStatus::INITIALIZING:
+      return "INITIALIZING";
+    case MessageStatus::REFRESHED:
+      return "REFRESHED";
+    case MessageStatus::REFRESHED_INITIALIZING:
+      return "REFRESHED_INITIALIZING";
+    case MessageStatus::NOT_AVAILABLE:
+      return "NOT_AVAILABLE";
+    case MessageStatus::CLOSED:
+      return "CLOSED";
+    case MessageStatus::DISCONNECTED:
+      return "DISCONNECTED";
+    case MessageStatus::PERMISSION_DENIED:
+      return "PERMISSION_DENIED";
+    case MessageStatus::NOT_SUPPORTED:
+      return "NOT_SUPPORTED";
+    case MessageStatus::INVALID_MESSAGE:
+      return "INVALID_MESSAGE";
+    case MessageStatus::INVALID_PARAMETER:
+      return "INVALID_PARAMETER";
+    case MessageStatus::BUSY:
+      return "BUSY";
+    case MessageStatus::ALIAS_LOOP:
+      return "ALIAS_LOOP";
+    case MessageStatus::CONNECTION_ERROR:
+      return "CONNECTION_ERROR";
+    default:
+      return "STR_VERSION_OF_STATUS_IS_NOT_AVAILABLE";
+  }
+}
+
 void Command::print_message(const ref_<const ResponseMessage> message){
+  std::cout<<cmdlog::var;
+  auto status = message->get_status();
+  std::cout<<"Message Status : "<<get_status_str(status)<<std::endl;
+
   if(message->get_body() != nullptr)
     message->print_message(std::cout, 0);
   else
-    std::cout<<"Body return null, probably you wanted to subscribe invalid path";
-  std::cout<<std::endl;
+    std::cout<<"Body: null";
+  std::cout<<cmdlog::endl;
 }
 
 std::string Command::merge_paths(const std::string &first_, const std::string &second_) {
