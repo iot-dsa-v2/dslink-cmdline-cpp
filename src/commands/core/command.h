@@ -30,13 +30,12 @@ class Command {
   boost::mutex print_mutex;
 
   virtual std::vector<int> _available_args_num_options() {return {};};
-  virtual void _print_usage_info() {};
+  virtual const char* _get_usage_info() {return "";};
   virtual COMMAND_RETURN_TYPE _execute() {return COMMAND_RETURN_CONTINUE;};
   virtual void _clear() {};
   virtual void _print() {};
 
   void print();
-  void print_usage_info();
   void set_invoked() {invoked = true;}
   void set_invokable() {invoked = false;}
 
@@ -46,6 +45,8 @@ class Command {
   virtual ~Command(){};
 
  public:
+
+  void print_usage_info();
   void execute();
   void clear();
 
@@ -65,6 +66,7 @@ class Command {
   static int wait_for_bool(const std::function<bool()>& callback);
 
   static const char* get_status_str(MessageStatus status);
+  static void print_usage_static(std::string usage_str);
 };
 
 #endif //CMDLINE_DSLINK_COMMAND_H

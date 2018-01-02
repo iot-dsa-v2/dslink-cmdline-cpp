@@ -6,8 +6,11 @@ std::vector<int> CommandFileList::_available_args_num_options() {
   return {0};
 }
 
-void CommandFileList::_print_usage_info() {
-  std::cout<<"filelist usage info"<<std::endl;
+const char* CommandFileList::_get_usage_info() {
+  return
+      "\tLists all defined placeholders with their filepaths.\n\n"
+      "```> filelist``` \n "
+      "\tlist all opened files\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandFileList::_execute() {

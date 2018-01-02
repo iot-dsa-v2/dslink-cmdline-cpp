@@ -23,9 +23,11 @@ Command::Command(const command_data cmd_data) {
 }
 
 void Command::print_usage_info() {
-  std::cout<<"Printing Usage Info..."<<std::endl;
-  _print_usage_info();
-  std::cout<<"...Printed Usage Info"<<std::endl;
+  std::cout<<termcolor::yellow<<"\n\n\n# ";
+  if(cmd_data.type!= COMMAND_UNKNOWN) std::cout<<cmd_data.command_str;
+  std::cout<<" Usage Info\n"<<termcolor::reset<<std::endl;
+  auto usage_info = _get_usage_info();
+  print_usage_static(usage_info);
 }
 
 
@@ -80,7 +82,7 @@ void Command::execute() {
     }
     return;
   }catch(std::exception &e){
-    std::cout<<e.what()<<std::endl;
+    std::cout<<cmdlog::error<<e.what()<<cmdlog::endl;
     print_usage_info();
     return;
   }
@@ -103,10 +105,10 @@ const char* Command::get_status_str(MessageStatus status)
       return "INITIALIZING";
     case MessageStatus::REFRESHED:
       return "REFRESHED";
-    case MessageStatus::REFRESHED_INITIALIZING:
-      return "REFRESHED_INITIALIZING";
     case MessageStatus::NOT_AVAILABLE:
       return "NOT_AVAILABLE";
+    case MessageStatus::DROPPED:
+      return "DROPPED";
     case MessageStatus::CLOSED:
       return "CLOSED";
     case MessageStatus::DISCONNECTED:
@@ -272,4 +274,23 @@ Var Command::get_Var_from_str(const std::string str_) {
   ) {
     throw std::runtime_error("error in json turning your value into dsa::Var : ");
   }
+}
+void Command::print_usage_static(std::string usage_str) {
+  typedef std::vector< std::string > split_vector_type;
+
+  split_vector_type SplitVec;
+  boost::split( SplitVec, usage_str, boost::is_any_of("```"), boost::token_compress_on);
+
+  int i = 0;
+  for(auto s:SplitVec){
+    if(i % 2 == 1){
+      std::cout<<cmdlog::stream;
+    }
+    else{
+      std::cout<<cmdlog::reset;
+    }
+    std::cout<<s;
+    i++;
+  }
+  std::cout<<cmdlog::reset;
 }

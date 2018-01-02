@@ -6,6 +6,7 @@
 #include "util/app.h"
 
 #include <module/default/console_logger.h>
+#include <commands/command_help.h>
 
 #include "cmdline.h"
 
@@ -38,6 +39,7 @@ bool connect_dslink(int argc, const char* argv[], std::shared_ptr<App> app) {
   }
 
   std::cout<<cmdlog::success<<"cmd-dslink is connected, you can go for it!"<<cmdlog::endl;
+  CommandHelp(command_data()).print_usage_info();
 
   return true;
 }

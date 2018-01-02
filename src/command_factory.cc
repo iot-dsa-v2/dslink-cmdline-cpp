@@ -1,16 +1,16 @@
 
+#include "command_factory.h"
+
 #include <commands/command_timeout.h>
 #include <commands/command_file.h>
 #include <commands/command_filelist.h>
-#include "command_factory.h"
-
-#include "commands/command_unknown.h"
 #include "commands/command_quit.h"
 #include "commands/command_list.h"
 #include "commands/command_cd.h"
 #include "commands/command_subscribe.h"
 #include "commands/command_set.h"
 #include "commands/command_invoke.h"
+#include "commands/command_help.h"
 
 CommandFactory::CommandFactory() {
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("quit", COMMAND_QUIT));
@@ -28,10 +28,11 @@ CommandFactory::CommandFactory() {
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("timeout", COMMAND_TIMEOUT));
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("file", COMMAND_FILE));
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("filelist", COMMAND_FILELIST));
+  command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("help", COMMAND_HELP));
+  command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("?", COMMAND_HELP));
 }
 
 std::shared_ptr<Command> CommandFactory::get_command(std::string _line) {
-
   auto cmd = tokenize(_line);
   cmd.type = command_str_map[cmd.command_str];
 
@@ -54,8 +55,64 @@ std::shared_ptr<Command> CommandFactory::get_command(std::string _line) {
       return make_shared_<CommandFile>(cmd);
     case COMMAND_FILELIST:
       return make_shared_<CommandFileList>(cmd);
+    case COMMAND_HELP:
+      return make_shared_<CommandHelp>(cmd);
   }
 
-  return make_shared_<CommandUnknown>(cmd);
+  return make_shared_<CommandHelp>(cmd);
 }
 
+void CommandFactory::print_info(command_data cmd_data){
+  auto which = cmd_data.command_str;
+  if(which == "stream") {
+    auto p =
+        "\t# stream prefix\n"
+            "\tAdd stream in front of subscribe or list, so the stream will be open unless user closes.\n\n"
+            "```> stream list downstream```\n"
+            "\tlistens downstream and print if any changes\n\n"
+            "```> stream subs downstream/my_node/value```\n"
+            "\tlistens downstream and print if any changes\n\n";
+    Command::print_usage_static(p);
+    return;
+  } else if(which == "debug") {
+    auto p =
+        "\t# debug prefix\n"
+            "\tOpen main dslink trace to see whats going on the inside of dslink.\n\n"
+            "```> debug list downstream```\n"
+            "\twhile listing downstream see what is going on in dslink\n\n";
+    Command::print_usage_static(p);
+    return;
+  }
+
+  cmd_data.type = command_str_map[cmd_data.command_str];
+
+  switch (cmd_data.type){
+    case COMMAND_QUIT:
+      CommandQuit(cmd_data).print_usage_info();
+      break;
+    case COMMAND_CD:
+      CommandCD(cmd_data).print_usage_info();
+      break;
+    case COMMAND_LIST:
+      CommandList(cmd_data).print_usage_info();
+      break;
+    case COMMAND_SUBSCRIBE:
+      CommandSubscribe(cmd_data).print_usage_info();
+      break;
+    case COMMAND_INVOKE:
+      CommandInvoke(cmd_data).print_usage_info();
+      break;
+    case COMMAND_SET:
+      CommandSet(cmd_data).print_usage_info();
+      break;
+    case COMMAND_TIMEOUT:
+      CommandTimeout(cmd_data).print_usage_info();
+      break;
+    case COMMAND_FILE:
+      CommandFile(cmd_data).print_usage_info();
+      break;
+    case COMMAND_FILELIST:
+      CommandFileList(cmd_data).print_usage_info();
+      break;
+  }
+}

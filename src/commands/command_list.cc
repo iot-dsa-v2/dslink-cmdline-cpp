@@ -5,8 +5,19 @@ std::vector<int> CommandList::_available_args_num_options() {
   return {0, 1};
 }
 
-void CommandList::_print_usage_info() {
-  std::cout<<"Printing list usage info"<<std::endl;
+const char* CommandList::_get_usage_info() {
+  return
+          "\t(list|ls|dir) Lists to given directory and close the stream after listing.\n\n"
+          "```> ls```\n"
+          "\tlists current directory\n\n"
+          "```> ls .```\n"
+          "\tlists current directory\n\n"
+          "```> ls TARGET_PATH```\n"
+          "\tlist to target path\n\n"
+          "If you put \"stream\" in front it "
+          "like ```> stream list PATH``` "
+          "or ```> stream list``` it doesn't close "
+          "the stream so you can take updates in real time from server.\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandList::_execute() {

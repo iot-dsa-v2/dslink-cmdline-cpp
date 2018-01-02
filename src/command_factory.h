@@ -20,6 +20,7 @@ using namespace dsa;
    CommandFactory();
 
    std::shared_ptr<Command> get_command(std::string _line);
+   void print_info(command_data cmd);
  };
 
 #endif //CMDLINE_DSLINK_COMMAND_FACTORY_H

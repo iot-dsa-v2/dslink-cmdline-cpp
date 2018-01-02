@@ -6,8 +6,12 @@ std::vector<int> CommandQuit::_available_args_num_options() {
   return {0};
 }
 
-void CommandQuit::_print_usage_info() {
-  std::cout<<"Just type 'quit'..."<<std::endl;
+const char* CommandQuit::_get_usage_info() {
+  return
+      "\t(quit|exit|q)\n"
+          "\tStops its link and exits..\n\n"
+          "```> quit```\n"
+          "\tquits\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandQuit::_execute() {

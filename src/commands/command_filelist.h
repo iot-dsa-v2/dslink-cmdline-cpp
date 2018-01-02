@@ -12,7 +12,7 @@ class CommandFileList : public Command {
 
  protected:
   std::vector<int> _available_args_num_options() override;
-  void _print_usage_info() override;
+  const char* _get_usage_info() override;
   COMMAND_RETURN_TYPE _execute() override;
   void _print() override;
 

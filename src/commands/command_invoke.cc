@@ -7,8 +7,13 @@ std::vector<int> CommandInvoke::_available_args_num_options() {
   return {1, 2};
 }
 
-void CommandInvoke::_print_usage_info() {
-  std::cout<<"Writing invoke usage info..."<<std::endl;
+const char* CommandInvoke::_get_usage_info() {
+  return
+          "(invoke|inv) a path from server.\n\n"
+          "```> invoke PATH```\n"
+          "\tinvoke PATH\n\n"
+          "```> invoke PATH Var```\n"
+          "\tinvoke PATH with given Var\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandInvoke::_execute() {

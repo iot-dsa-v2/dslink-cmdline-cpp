@@ -7,8 +7,13 @@ std::vector<int> CommandSet::_available_args_num_options() {
   return {2,3};
 }
 
-void CommandSet::_print_usage_info() {
-  std::cout<<"Printing set usage info"<<std::endl;
+const char* CommandSet::_get_usage_info() {
+  return
+          "\tset a path with given value and optional attribe from server.\n\n"
+          "```> set PATH Var```\n"
+          "\tset PATH with given VAR\n\n"
+          "```> set PATH Var ATTRIBUTE```\n"
+          "\tset ATTRIBUTE in PATH with given VAR\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandSet::_execute() {

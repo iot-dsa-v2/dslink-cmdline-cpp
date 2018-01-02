@@ -9,8 +9,23 @@ std::vector<int> CommandFile::_available_args_num_options() {
   return {3};
 }
 
-void CommandFile::_print_usage_info() {
-  std::cout<<"file FILEPATH txt|bin ATTR_NAME"<<std::endl;
+const char* CommandFile::_get_usage_info() {
+  return
+      "\tSave file path from local machine for later use in Var.\n\n"
+      "```> file PATH bin PLACEHOLDERNAME``` \n"
+      "\tstores PATH as named PLACEHOLDER with noted as bin. "
+      "It should be called if you want to send data as binary\n\n"
+      "```> file PATH txt PLACEHOLDERNAME``` \n"
+      "\tstores PATH as named PLACEHOLDER with noted as txt. "
+      "It should be called if you want to send data as string.\n\n"
+      "You can use these while you are giving a Var to a command. "
+      "For example if we have json tex file we can load it "
+      "like ```> file my.json txt myjson``` so you can invoke "
+      "like ```> invoke sys/stop 'myjson'``` It reads file "
+      "content in txt and puts there. Placeholders in commands "
+      "should be encapsulated with '' You can write nested Var "
+      "like ```> invoke sys/stop {\"key\":'myjson'}```. Binary is "
+      "the same : ```> file lena.jpg bin my_image```\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandFile::_execute() {

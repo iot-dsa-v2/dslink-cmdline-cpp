@@ -7,8 +7,13 @@ std::vector<int> CommandTimeout::_available_args_num_options() {
   return {1};
 }
 
-void CommandTimeout::_print_usage_info() {
-  std::cout<<"time out usage"<<std::endl;
+const char* CommandTimeout::_get_usage_info() {
+  return
+          "\tSometimes server don't respond so cmd waits TIMEOUT milisecond and than "
+          "inform the user about it and gives a chance to cancel it. You can set "
+          "the time between begining command and asking user to cancel it.\n\n"
+          "```> timeout 2000```\n"
+          "\tsets 2 seconds\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandTimeout::_execute() {

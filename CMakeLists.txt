@@ -51,7 +51,7 @@ add_executable(cmdline_dslink
         src/command_factory.cc
         src/commands/core/command.cc
         src/commands/core/command_data.cc
-        src/commands/command_unknown.cc
+        src/commands/command_help.cc
         src/commands/command_list.cc
         src/commands/command_cd.cc
         src/commands/command_set.cc

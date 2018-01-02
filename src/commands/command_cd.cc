@@ -1,12 +1,22 @@
 
 #include "command_cd.h"
 
+
 std::vector<int> CommandCD::_available_args_num_options() {
   return {0, 1};
 }
 
-void CommandCD::_print_usage_info() {
-  std::cout<<"for going somewhere just write cd DIR or for root just type cd"<<std::endl;
+const char* CommandCD::_get_usage_info() {
+  return
+      "\tChanges current directory to given directory. If there is no directory given it goes root.\n\n"
+      "```> cd```\n"
+      "\tnavigates to the root\n\n"
+      "```> cd TARGET_PATH```\n"
+      "\tnavigates to target path\n\n"
+      "```> cd ..```\n"
+      "\tnavigates to one level back\n\n"
+      "```> cd .```\n"
+      "\tdoes nothing, you are still same directory\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandCD::_execute() {

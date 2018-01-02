@@ -6,8 +6,13 @@ std::vector<int> CommandSubscribe::_available_args_num_options() {
   return {1};
 }
 
-void CommandSubscribe::_print_usage_info() {
-  std::cout<<"Printing subscribe usage info"<<std::endl;
+const char* CommandSubscribe::_get_usage_info() {
+  return
+          "\t(subscribe|subs) Subcribes to the path\n\n"
+          "```>subscribe PATH```\n"
+          "\tsubscribe to the path\n\n"
+          "If you put \"stream\" in front it like stream ```> subs PATH``` "
+          "it doesn't close the stream so you can take updates in real time from server.\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
