@@ -96,46 +96,10 @@ void Command::clear() {
   }
 }
 
-const char* Command::get_status_str(MessageStatus status)
-{
-  switch(status){
-    case MessageStatus::OK:
-      return "OK";
-    case MessageStatus::INITIALIZING:
-      return "INITIALIZING";
-    case MessageStatus::REFRESHED:
-      return "REFRESHED";
-    case MessageStatus::NOT_AVAILABLE:
-      return "NOT_AVAILABLE";
-    case MessageStatus::DROPPED:
-      return "DROPPED";
-    case MessageStatus::CLOSED:
-      return "CLOSED";
-    case MessageStatus::DISCONNECTED:
-      return "DISCONNECTED";
-    case MessageStatus::PERMISSION_DENIED:
-      return "PERMISSION_DENIED";
-    case MessageStatus::NOT_SUPPORTED:
-      return "NOT_SUPPORTED";
-    case MessageStatus::INVALID_MESSAGE:
-      return "INVALID_MESSAGE";
-    case MessageStatus::INVALID_PARAMETER:
-      return "INVALID_PARAMETER";
-    case MessageStatus::BUSY:
-      return "BUSY";
-    case MessageStatus::ALIAS_LOOP:
-      return "ALIAS_LOOP";
-    case MessageStatus::CONNECTION_ERROR:
-      return "CONNECTION_ERROR";
-    default:
-      return "STR_VERSION_OF_STATUS_IS_NOT_AVAILABLE";
-  }
-}
-
 void Command::print_message(const ref_<const ResponseMessage> message){
   std::cout<<cmdlog::var;
   auto status = message->get_status();
-  std::cout<<"Message Status : "<<get_status_str(status)<<std::endl;
+  std::cout<<"Message Status : "<<to_string(status)<<std::endl;
 
   if(message->get_body() != nullptr)
     message->print_message(std::cout, 0);

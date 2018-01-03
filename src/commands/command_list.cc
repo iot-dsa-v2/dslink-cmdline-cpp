@@ -52,5 +52,5 @@ void CommandList::_print() {
   if(status == MessageStatus::OK)
     std::cout<<cmdlog::var<<Var(new VarMap(map)).to_json(1)<<cmdlog::endl;
   else
-    std::cout<<cmdlog::var<<"Message Status : "<<get_status_str(status)<<cmdlog::endl;
+    std::cout<<cmdlog::var<<"Message Status : "<<to_string(status)<<cmdlog::endl;
 }
