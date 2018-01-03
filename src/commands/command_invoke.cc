@@ -51,4 +51,8 @@ void CommandInvoke::_clear() {
 
 void CommandInvoke::_print() {
   print_message(message);
+
+  auto v = message->get_value();
+  if(v.get_type() != Var::NUL)
+    std::cout<<cmdlog::var<<v.to_json(0)<<cmdlog::endl;
 }
