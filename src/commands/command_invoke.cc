@@ -40,6 +40,8 @@ COMMAND_RETURN_TYPE CommandInvoke::_execute() {
       },
       std::move(invoke_req));
 
+  if(cmd_data.is_stream) return COMMAND_RETURN_WAIT;
+
   return COMMAND_RETURN_CONTINUE;
 }
 
