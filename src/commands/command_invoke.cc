@@ -47,7 +47,9 @@ COMMAND_RETURN_TYPE CommandInvoke::_execute() {
 
 void CommandInvoke::_clear() {
   if(stream != nullptr){
+    stream->close();
     stream->destroy();
+    stream.reset();
   }
 }
 
