@@ -11,9 +11,9 @@ List to given directory and close the stream after listing.
 
 > If you put "stream" in front it like `stream list PATH` or `stream list` it doesn't close the stream so you can take updates in real time from server.
 ## command: cd
-Changes current directory to given directory. If there is no directory given it goes root.
+Changes current directory to given directory. If there is '/' given in beginning it overrides current directory.
 
-`> cd` -> navigates to the root
+`> cd /` -> navigates to the root
 
 `> cd TARGET_PATH` -> navigates to target path
 

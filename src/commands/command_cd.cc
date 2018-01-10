@@ -3,13 +3,13 @@
 
 
 std::vector<int> CommandCD::_available_args_num_options() {
-  return {0, 1};
+  return {1};
 }
 
 const char* CommandCD::_get_usage_info() {
   return
-      "\tChanges current directory to given directory. If there is no directory given it goes root.\n\n"
-      "```> cd```\n"
+      "\tChanges current directory to given directory. If there is '/' given in beginning it overrides your current directory.\n\n"
+      "```> cd /```\n"
       "\tnavigates to the root\n\n"
       "```> cd TARGET_PATH```\n"
       "\tnavigates to target path\n\n"

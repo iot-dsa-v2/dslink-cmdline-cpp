@@ -108,8 +108,14 @@ void Command::print_message(const ref_<const ResponseMessage> message){
   std::cout<<cmdlog::endl;
 }
 
-std::string Command::merge_paths(const std::string &first_, const std::string &second_) {
+std::string Command::merge_paths(const std::string &first__, const std::string &second_) {
   std::vector<std::string> total_path_div;
+
+  // Check whether first is overloaded?
+  auto first_ = first__;
+  if(second_.size() > 0 && second_[0] == '/'){
+    first_ = "";
+  }
 
   // Divide first and add to total path
   std::vector<std::string> first_div;
