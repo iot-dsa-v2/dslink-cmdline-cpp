@@ -46,8 +46,15 @@ COMMAND_RETURN_TYPE CommandSet::_execute() {
 }
 
 void CommandSet::_clear() {
-  if(stream != nullptr){
-    stream->destroy();
+  if (stream) {
+    auto l = stream;
+    stream.reset();
+    link->strand->post([l]() {
+      l->close();
+      l->destroy();
+    });
+
+    wait_for_bool([l]() -> bool { return l->is_destroyed(); });
   }
 }
 

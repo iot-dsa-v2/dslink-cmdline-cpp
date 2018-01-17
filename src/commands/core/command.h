@@ -2,15 +2,15 @@
 #ifndef CMDLINE_DSLINK_COMMAND_H
 #define CMDLINE_DSLINK_COMMAND_H
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
-#include "dslink.h"
 #include "command_data.h"
+#include "dslink.h"
 
 #include "utils/cmdlog.h"
 
@@ -67,6 +67,7 @@ class Command {
 
   static const char* get_status_str(MessageStatus status);
   static void print_usage_static(std::string usage_str);
+
 };
 
 #endif //CMDLINE_DSLINK_COMMAND_H

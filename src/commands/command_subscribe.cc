@@ -41,11 +41,15 @@ COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
 }
 
 void CommandSubscribe::_clear() {
-  if(incoming_subscribe_cache != nullptr){
-    incoming_subscribe_cache->destroy();
+  if (incoming_subscribe_cache) {
+    auto l = incoming_subscribe_cache;
     incoming_subscribe_cache.reset();
+    link->strand->post([l]() { l->destroy(); });
+
+    wait_for_bool([l]() -> bool { return l->is_destroyed(); });
   }
 }
+
 void CommandSubscribe::_print() {
   std::cout<<cmdlog::info<<"Printing subscribe message from path : "
            <<cmdlog::path<<target_path<<std::endl;

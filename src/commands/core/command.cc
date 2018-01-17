@@ -1,8 +1,8 @@
 
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
 #include "command.h"
 #include "message/base_message.h"
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 #include "dsa_common.h"
 #include <module/default/console_logger.h>
@@ -89,7 +89,9 @@ void Command::execute() {
 }
 
 void Command::clear() {
+  print_mutex.lock();
   _clear();
+  print_mutex.unlock();
   // Debug?
   if(cmd_data.is_debug){
     static_cast<ConsoleLogger &>(link->strand->logger()).level = Logger::NONE__;
@@ -182,9 +184,9 @@ int Command::wait_for_bool(const std::function<bool()> &callback) {
 }
 
 #include <boost/algorithm/string.hpp>
-#include <string>
 #include <fstream>
 #include <streambuf>
+#include <string>
 
 Var Command::get_Var_from_str(const std::string str_) {
   if (str_.size() == 0)

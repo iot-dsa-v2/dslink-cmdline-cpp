@@ -1,23 +1,21 @@
 
 #include "command_list.h"
 
-std::vector<int> CommandList::_available_args_num_options() {
-  return {0, 1};
-}
+std::vector<int> CommandList::_available_args_num_options() { return {0, 1}; }
 
-const char* CommandList::_get_usage_info() {
-  return
-          "\t(list|ls|dir) Lists to given directory and close the stream after listing.\n\n"
-          "```> ls```\n"
-          "\tlists current directory\n\n"
-          "```> ls .```\n"
-          "\tlists current directory\n\n"
-          "```> ls TARGET_PATH```\n"
-          "\tlist to target path\n\n"
-          "If you put \"stream\" in front it "
-          "like ```> stream list PATH``` "
-          "or ```> stream list``` it doesn't close "
-          "the stream so you can take updates in real time from server.\n\n";
+const char *CommandList::_get_usage_info() {
+  return "\t(list|ls|dir) Lists to given directory and close the stream after "
+         "listing.\n\n"
+         "```> ls```\n"
+         "\tlists current directory\n\n"
+         "```> ls .```\n"
+         "\tlists current directory\n\n"
+         "```> ls TARGET_PATH```\n"
+         "\tlist to target path\n\n"
+         "If you put \"stream\" in front it "
+         "like ```> stream list PATH``` "
+         "or ```> stream list``` it doesn't close "
+         "the stream so you can take updates in real time from server.\n\n";
 }
 
 COMMAND_RETURN_TYPE CommandList::_execute() {
@@ -35,22 +33,27 @@ COMMAND_RETURN_TYPE CommandList::_execute() {
         print();
       });
 
-  if(cmd_data.is_stream) return COMMAND_RETURN_WAIT;
+  if (cmd_data.is_stream) return COMMAND_RETURN_WAIT;
 
   return COMMAND_RETURN_CONTINUE;
 }
 
 void CommandList::_clear() {
-  if(incoming_list_cache){
-    incoming_list_cache->destroy();
+  if (incoming_list_cache) {
+    auto l = incoming_list_cache;
     incoming_list_cache.reset();
+    link->strand->post([l]() { l->destroy(); });
+
+    wait_for_bool([l]() -> bool { return l->is_destroyed(); });
   }
 }
+
 void CommandList::_print() {
   auto map = cache.get_map();
 
-  if(status == MessageStatus::OK)
-    std::cout<<cmdlog::var<<Var(new VarMap(map)).to_json(1)<<cmdlog::endl;
+  if (status == MessageStatus::OK)
+    std::cout << cmdlog::var << Var(new VarMap(map)).to_json(1) << cmdlog::endl;
   else
-    std::cout<<cmdlog::var<<"Message Status : "<<to_string(status)<<cmdlog::endl;
+    std::cout << cmdlog::var << "Message Status : " << to_string(status)
+              << cmdlog::endl;
 }

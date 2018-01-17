@@ -46,10 +46,15 @@ COMMAND_RETURN_TYPE CommandInvoke::_execute() {
 }
 
 void CommandInvoke::_clear() {
-  if(stream != nullptr){
-    stream->close();
-    stream->destroy();
+  if (stream) {
+    auto l = stream;
     stream.reset();
+    link->strand->post([l]() {
+      l->close();
+      l->destroy();
+    });
+
+    wait_for_bool([l]() -> bool { return l->is_destroyed(); });
   }
 }
 
