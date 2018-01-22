@@ -1,3 +1,4 @@
+#include "dsa_common.h"
 
 #include "command.h"
 #include "message/base_message.h"

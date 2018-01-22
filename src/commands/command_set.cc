@@ -1,3 +1,4 @@
+#include "dsa_common.h"
 
 #include "command_set.h"
 #include "message/request/set_request_message.h"

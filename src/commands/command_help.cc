@@ -1,3 +1,5 @@
+#include "dsa_common.h"
+
 #include "command_help.h"
 
 #include <command_factory.h>
