@@ -21,9 +21,17 @@ Changes current directory to given directory. If there is '/' given in beginning
 
 `> cd .` -> does nothing, you are still same directory
 ## command: subscribe | subs
-Subcribes to the path
+Subscribes to the path. You can give options for (level|size|duration|priority) and these values like ```level=0``` ```size=96``` ```duration=100``` or ```priority=false```. You can not put space for equal signs.
 
 `>subscribe PATH` -> subscribe to the path
+
+`>subscribe PATH level=0` -> subscribe to the path with level 0
+
+`>subscribe PATH priority=false` -> subscribe to the path with priority false
+
+`>subscribe PATH size=256 priority=false` -> subscribe to the path with size 256 and priority false
+
+`>subscribe PATH level=0 size=244 duration=255 priority=true` -> all options usage example
 > If you put "stream" in front it like `stream subs PATH` it doesn't close the stream so you can take updates in real time from server.
 ## Var
 A type which based on msgpack. It can be:

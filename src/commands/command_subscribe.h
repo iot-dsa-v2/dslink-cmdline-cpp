@@ -4,12 +4,24 @@
 
 #include "core/command.h"
 
+enum SubscribeOptStr{
+  LEVEL,
+  SIZE,
+  DURATION,
+  PRIORITY,
+  UNKNOWN
+};
+
 class CommandSubscribe : public Command {
  private:
   ref_<IncomingSubscribeCache>  incoming_subscribe_cache;
   IncomingSubscribeCache cache;
   ref_<const SubscribeResponseMessage> message;
   std::string target_path;
+
+  static SubscribeOptStr get_enum_from_str(string_ str);
+  static bool update_subscribe_options(std::vector<string_> strs, SubscribeOptions& options);
+
 
  public:
   using Command::Command;
