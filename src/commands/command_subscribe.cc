@@ -51,7 +51,6 @@ COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
       target_path.c_str(),
       [&](IncomingSubscribeCache &cache, ref_<const SubscribeResponseMessage> message) {
         print_mutex.lock();
-        this->cache = cache;
         this->message = message;
         this->status = message->get_status();
         print_mutex.unlock();

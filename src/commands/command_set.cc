@@ -52,10 +52,9 @@ void CommandSet::_clear() {
     stream.reset();
     link->strand->post([l]() {
       l->close();
-      l->destroy();
     });
 
-    wait_for_bool([l]() -> bool { return l->is_destroyed(); });
+    wait_for_bool([l]() -> bool { return l->is_closed(); });
   }
 }
 

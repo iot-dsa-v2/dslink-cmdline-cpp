@@ -7,7 +7,6 @@
 class CommandList: public Command {
  private:
   ref_<IncomingListCache> incoming_list_cache;
-  IncomingListCache cache;
   std::vector<std::string> changes;
   std::string target_path;
 

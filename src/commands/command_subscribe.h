@@ -15,7 +15,6 @@ enum SubscribeOptStr{
 class CommandSubscribe : public Command {
  private:
   ref_<IncomingSubscribeCache>  incoming_subscribe_cache;
-  IncomingSubscribeCache cache;
   ref_<const SubscribeResponseMessage> message;
   std::string target_path;
 

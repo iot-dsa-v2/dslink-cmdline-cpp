@@ -1,5 +1,8 @@
 # cmd-dslink-cpp
 It is a dslink that you can control it from command line with commands.
+
+![Screenshot](screenshot.png)
+
 ## command: ls | list | dir
 List to given directory and close the stream after listing.
 

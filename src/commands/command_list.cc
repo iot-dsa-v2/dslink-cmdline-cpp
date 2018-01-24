@@ -27,7 +27,6 @@ COMMAND_RETURN_TYPE CommandList::_execute() {
       target_path.c_str(),
       [&](IncomingListCache &cache, const std::vector<string_> &str) {
         print_mutex.lock();
-        this->cache = cache;
         this->changes = str;
         this->status = cache.get_status();
         print_mutex.unlock();
@@ -50,8 +49,7 @@ void CommandList::_clear() {
 }
 
 void CommandList::_print() {
-  auto map = cache.get_map();
-
+  auto map = incoming_list_cache->get_map();
   if (status == MessageStatus::OK)
     std::cout << cmdlog::var << Var(new VarMap(map)).to_json(1) << cmdlog::endl;
   else
