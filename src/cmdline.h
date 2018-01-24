@@ -24,9 +24,15 @@ class CmdLine {
   ref_<DsLink> link;
   CommandFactory command_factory;
 
+  bool is_connected;
+  void set_connected(bool value);
+
+  bool is_waiting_user_input;
+
   std::unique_ptr<boost::asio::io_service::strand> strand;
 
   bool get_input();
+  void print_wanting_user_input();
 
  public:
   CmdLine(std::shared_ptr<App> app, ref_<DsLink> dslink);
