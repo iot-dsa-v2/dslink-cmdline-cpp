@@ -79,21 +79,21 @@ void CommandSubscribe::_print() {
   print_message(message);
 }
 
-SubscribeOptStr CommandSubscribe::get_enum_from_str(string_ str){
+subscribe_command::SubscribeOptStr CommandSubscribe::get_enum_from_str(string_ str){
 
   if(str == "priority")
-    return SubscribeOptStr::PRIORITY;
+    return subscribe_command::SubscribeOptStr::PRIORITY;
 
   if(str == "level")
-    return SubscribeOptStr::LEVEL;
+    return subscribe_command::SubscribeOptStr::LEVEL;
 
   if(str == "duration")
-    return SubscribeOptStr::DURATION;
+    return subscribe_command::SubscribeOptStr::DURATION;
 
   if(str == "size")
-    return SubscribeOptStr::SIZE;
+    return subscribe_command::SubscribeOptStr::SIZE;
 
-  return SubscribeOptStr::UNKNOWN;
+  return subscribe_command::SubscribeOptStr::UNKNOWN;
 }
 
 
@@ -110,14 +110,14 @@ bool CommandSubscribe::update_subscribe_options(std::vector<string_> strs, Subsc
     // Check availability of options
     auto opt = get_enum_from_str(divided[0]);
 
-    if(opt == SubscribeOptStr::UNKNOWN){
+    if(opt == subscribe_command::SubscribeOptStr::UNKNOWN){
       std::cout << cmdlog::error << "Option couldn't be understanded. "
           "It can be (priority|level|size|duration) but it is " << cmdlog::path << divided[0] << cmdlog::endl;
       return false;
     }
 
     // First check priority because it has bool so different from others(integer)
-    if(opt == SubscribeOptStr::PRIORITY){
+    if(opt == subscribe_command::SubscribeOptStr::PRIORITY){
       auto must_bool = divided[1];
       if(must_bool == "true"){
         options.priority = true;
@@ -145,7 +145,7 @@ bool CommandSubscribe::update_subscribe_options(std::vector<string_> strs, Subsc
     }
 
     switch(opt){
-      case SubscribeOptStr::LEVEL:
+      case subscribe_command::SubscribeOptStr::LEVEL:
         if(val < 0 || val > 3){
           std::cout <<cmdlog::error << "Level must be between [0,3], you gave "
                     <<cmdlog::path << val << cmdlog::endl;
@@ -154,11 +154,11 @@ bool CommandSubscribe::update_subscribe_options(std::vector<string_> strs, Subsc
         options.qos = (QosLevel)val;
         break;
 
-      case SubscribeOptStr::DURATION:
+      case subscribe_command::SubscribeOptStr::DURATION:
         options.queue_duration = val;
         break;
 
-      case SubscribeOptStr::SIZE:
+      case subscribe_command::SubscribeOptStr::SIZE:
         options.queue_size = val;
         break;
     }

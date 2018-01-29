@@ -4,6 +4,7 @@
 
 #include "core/command.h"
 
+namespace subscribe_command{
 enum SubscribeOptStr{
   LEVEL,
   SIZE,
@@ -11,6 +12,7 @@ enum SubscribeOptStr{
   PRIORITY,
   UNKNOWN
 };
+}
 
 class CommandSubscribe : public Command {
  private:
@@ -18,7 +20,7 @@ class CommandSubscribe : public Command {
   ref_<const SubscribeResponseMessage> message;
   std::string target_path;
 
-  static SubscribeOptStr get_enum_from_str(string_ str);
+  static subscribe_command::SubscribeOptStr get_enum_from_str(string_ str);
   static bool update_subscribe_options(std::vector<string_> strs, SubscribeOptions& options);
 
 
