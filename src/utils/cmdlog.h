@@ -3,6 +3,12 @@
 
 #include "term_color.h"
 
+#ifdef _WIN32
+#define TERM_COLOR_STREAM termcolor::magenta
+#else
+#define TERM_COLOR_STREAM termcolor::blue
+#endif
+
 namespace cmdlog {
 
 inline
@@ -35,7 +41,7 @@ std::ostream &var(std::ostream &stream) {
 
 inline
 std::ostream &stream(std::ostream &stream) {
-  return stream << termcolor::blue << "# ";
+  return stream << TERM_COLOR_STREAM << "# ";
 }
 
 inline

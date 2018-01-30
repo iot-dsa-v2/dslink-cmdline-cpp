@@ -17,6 +17,11 @@
 
 using namespace dsa;
 
+#ifdef _WIN32
+#define CMDLINE_CIRCLE "O"
+#else
+#define CMDLINE_CIRCLE "\u25CF"
+#endif
 
 class CmdLine {
  private:

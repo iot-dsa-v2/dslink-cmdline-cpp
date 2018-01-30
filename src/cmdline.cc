@@ -37,8 +37,8 @@ CmdLine::CmdLine(std::shared_ptr<App> app, ref_<DsLink> dslink) {
 
   std::cout << "------------" << std::endl;
   std::cout << cmdlog::info << "We requested to connect." << cmdlog::endl;
-  std::cout << cmdlog::info << "Connected : "<<termcolor::green<<"\u25CF"<<termcolor::reset
-            << " | "<<"Disconnected : " <<termcolor::red<<"\u25CF"<< termcolor::reset << cmdlog::endl;
+  std::cout << cmdlog::info << "Connected : "<< termcolor::green<< CMDLINE_CIRCLE <<termcolor::reset
+            << " | "<<"Disconnected : " <<termcolor::red<< CMDLINE_CIRCLE << termcolor::reset << cmdlog::endl;
   std::cout << cmdlog::info << "If it is not connected, check broker address that you gave." << cmdlog::endl;
 
   // Just wait little bit for connect
@@ -148,7 +148,7 @@ void CmdLine::print_wanting_user_input(){
   else{
     std::cout<<termcolor::red;
   }
-  std::cout<<"\u25CF ";
+  std::cout << CMDLINE_CIRCLE << " ";
 
   std::cout<<cmdlog::path<<"> "<<Command::current_path<<cmdlog::reset<<" ";
   std::cout<<std::flush;
