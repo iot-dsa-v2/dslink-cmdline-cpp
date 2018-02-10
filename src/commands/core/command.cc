@@ -21,6 +21,7 @@ Command::Command(const command_data cmd_data) {
   return_type = COMMAND_RETURN_CONTINUE;
   // default is false
   invoked = true;
+  informed = false;
 }
 
 void Command::print_usage_info() {
@@ -35,9 +36,13 @@ void Command::print_usage_info() {
 void Command::print() {
   set_invoked();
 
-  // inform user how he can close stream
-  if(cmd_data.is_stream){
-    std::cout<<cmdlog::stream<< "Press enter to cancel stream..."<<std::endl;
+
+  if(!informed) {
+    // inform user how he can close stream
+    if (cmd_data.is_stream) {
+      std::cout << cmdlog::stream << "Press enter to cancel stream..." << std::endl;
+    }
+    informed = true;
   }
 
 //  // clear screen is stream

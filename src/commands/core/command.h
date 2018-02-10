@@ -22,6 +22,7 @@ class Command {
   COMMAND_RETURN_TYPE return_type;
 
   bool invoked;
+  bool informed;
 
  protected:
   command_data cmd_data;
