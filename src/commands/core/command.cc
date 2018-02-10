@@ -35,19 +35,19 @@ void Command::print_usage_info() {
 void Command::print() {
   set_invoked();
 
-  // clear screen is stream
-  if(cmd_data.is_stream){
-    for(int i = 0; i < 100; i++) std::cout<<std::endl;
-  }
-
-  print_mutex.lock();
-  _print();
-  print_mutex.unlock();
-
   // inform user how he can close stream
   if(cmd_data.is_stream){
     std::cout<<cmdlog::stream<< "Press enter to cancel stream..."<<std::endl;
   }
+
+//  // clear screen is stream
+//  if(cmd_data.is_stream){
+//    for(int i = 0; i < 100; i++) std::cout<<std::endl;
+//  }
+
+  print_mutex.lock();
+  _print();
+  print_mutex.unlock();
 }
 
 

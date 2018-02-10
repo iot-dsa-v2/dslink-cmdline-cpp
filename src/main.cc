@@ -7,6 +7,9 @@
 
 #include <commands/command_help.h>
 #include <module/default/console_logger.h>
+#include <module/storage.h>
+#include <module/client_manager.h>
+#include <module/authorizer.h>
 
 #include "cmdline.h"
 
