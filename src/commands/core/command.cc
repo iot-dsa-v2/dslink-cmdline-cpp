@@ -12,9 +12,6 @@ std::string Command::current_path = "";
 ref_<DsLink> Command::link = nullptr;
 int Command::timeout_in_ms = 1000;
 
-std::map<std::string, std::string> Command::file_txts = std::map<std::string, std::string>();
-std::map<std::string, std::string> Command::file_bins = std::map<std::string, std::string>();
-
 Command::Command(const command_data cmd_data) {
   this->cmd_data = cmd_data;
   // default is continue
@@ -194,34 +191,62 @@ int Command::wait_for_bool(const std::function<bool()> &callback) {
 #include <streambuf>
 #include <string>
 
+#define BINARY_FILE_TEXT_BEGIN "binary_file("
+#define TEXT_FILE_TEXT_BEGIN "text_file("
+
+std::vector<std::string> split_file_strings(const std::string _source){
+
+  auto source = _source;
+  std::vector<std::string> separated_list;
+
+  while(true){
+    auto position_bin = source.find(BINARY_FILE_TEXT_BEGIN);
+    auto position_txt = source.find(TEXT_FILE_TEXT_BEGIN);
+    auto position = std::min(position_bin, position_txt);
+
+    if(position > source.size()) break;
+
+    // add first
+    separated_list.push_back(source.substr(0, position));
+
+    // find close char ')'
+    int close_position = -1;
+    for(int i = position; i < source.size(); i++){
+      if(source[i] == ')'){
+        close_position = i+1; break;
+      }
+    }
+
+    if(close_position == -1) throw std::runtime_error("token error");
+
+    // add file str
+    separated_list.push_back(source.substr(position,close_position-position));
+
+    // assign remaining
+    source = source.substr(close_position, source.size()-close_position);
+  }
+
+  // add remaining
+  separated_list.push_back(source);
+
+  return std::move(separated_list);
+}
+
 Var Command::get_Var_from_str(const std::string str_) {
   if (str_.size() == 0)
     throw std::runtime_error("str is null for turning into VAR ");
 
-  auto str = str_;
+  auto split_list = split_file_strings(str_);
 
-  // PLACEHOLDER TO VARS
-  for(auto v:file_txts){
-    auto t = "'" + v.first + "'";
-    if(boost::find_first(str, t)){
-      auto file_path = v.second;
-      // TEXT READ
-      std::ifstream f(file_path);
-      if(!f.is_open()){
-        throw std::runtime_error("file does not exists");
-      }
-      std::string str_from_file
-          ((std::istreambuf_iterator<char>(f)),
-           std::istreambuf_iterator<char>());
+  // We are iterating list to replace file contents
+  for(int i = 0; i < split_list.size(); i++){
+    auto str = split_list[i];
+    if(str.rfind(BINARY_FILE_TEXT_BEGIN,0) == 0){
+      // Extracting path
+      str.erase(0, sizeof(BINARY_FILE_TEXT_BEGIN) - 1);
+      str.pop_back();
+      auto file_path = str;
 
-      boost::replace_all(str, t, str_from_file);
-    }
-  }
-
-  for(auto v:file_bins){
-    auto t = "'" + v.first + "'";
-    if(boost::find_first(str, t)){
-      auto file_path = v.second;
       // BIN READ
       std::ifstream f(file_path, std::ios::binary );
       if(!f.is_open()){
@@ -232,16 +257,36 @@ Var Command::get_Var_from_str(const std::string str_) {
       auto v = Var((uint8_t *)buffer.data(), buffer.size());
       auto str_from_file = v.to_json(0);
 
-      //std::cout<<str_from_file<<std::endl;
-      boost::replace_all(str, t, str_from_file);
+      // replace str
+      split_list[i] = str_from_file;
+
+    }
+    else if(str.rfind(TEXT_FILE_TEXT_BEGIN,0) == 0){
+      // Extracting path
+      str.erase(0, sizeof(TEXT_FILE_TEXT_BEGIN) - 1);
+      str.pop_back();
+
+      // replace str
+      auto file_path = str;
+      // TEXT READ
+      std::ifstream f(file_path);
+      if(!f.is_open()){
+        throw std::runtime_error("file does not exists");
+      }
+      std::string str_from_file
+          ((std::istreambuf_iterator<char>(f)),
+           std::istreambuf_iterator<char>());
+
+      // replace str
+      split_list[i] = str_from_file;
     }
   }
 
-//  Var v = Var::from_json("{\"var\":" + str + "}");
-//  auto asd = v["var"].get_binary();
-//  for(int i = 0; i < asd.size(); i++)
-//  std::cout<<asd[i];
-//  std::cout<<std::endl;
+  // Merge them
+  string_ str;
+  for(auto sp:split_list){
+    str = str+sp;
+  }
 
   // It is a hack for reading value in json
   try {

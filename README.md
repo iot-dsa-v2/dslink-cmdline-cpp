@@ -46,6 +46,13 @@ A type which based on msgpack. It can be:
 * `true` | `false`
 * array `[5,3,2,"sdf",3.2,null]`
 * binary with BASE64 encapsulated with `"\u0001Bbytes:`BASE64`"`
+* file : check below
+
+## inplace: binary_file | text_file
+Open file content from path and inplace file content into Var.
+
+`> invoke install_from_zip {"name":"mynewdslink", "zip":binary_file(myzip.zip)}` -> open myzip.zip and dumps file content to "zip"
+
 ## command: set
 set a path with given value and optional attribe from server.
 
@@ -64,17 +71,10 @@ When you put in front of any command, system opens logs for dslink for command r
 `> debug invoke PATH`
 
 `> debug ls`
+
 ## command: quit | q | exit
 Stops its link and exits.
-## command: file
-Save file path from local machine for later use in Var.
 
-`> file PATH bin PLACEHOLDERNAME` -> stores PATH as named PLACEHOLDER with noted as bin. It should be called if you want to send data as binary
-
-`> file PATH txt PLACEHOLDERNAME` -> stores PATH as named PLACEHOLDER with noted as txt. It should be called if you want to send data as string.
-> You can use these while you are giving a Var to a command. For example if we have json tex file we can load it like `> file my.json txt myjson` so you can invoke like `> invoke sys/stop 'myjson'`. It reads file content in txt and puts there. Placeholders in commands should be encapsulated with `''` You can write nested Var like `> invoke sys/stop {"key":'myjson'}`. Binary is the same : `> file lena.jpg bin my_image`
-## command: filelist
-Lists all defined placeholders with their filepaths
 ## command: timeout
 Sometimes server don't respond so cmd waits TIMEOUT milisecond and than inform the user about it and gives a chance to cancel it. You can set the time between begining command and asking user to cancel it.
 
@@ -82,6 +82,4 @@ Sometimes server don't respond so cmd waits TIMEOUT milisecond and than inform t
 
 ## Examples
 
-`> file myzip.zip bin myzip`
-
-`> invoke install_from_zip {"name":"mynewdslink", "zip":'myzip'}`
+`> invoke install_from_zip {"name":"mynewdslink", "zip":binary_file(myzip.zip)}`

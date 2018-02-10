@@ -3,8 +3,6 @@
 #include "command_factory.h"
 
 #include <commands/command_timeout.h>
-#include <commands/command_file.h>
-#include <commands/command_filelist.h>
 #include "commands/command_quit.h"
 #include "commands/command_list.h"
 #include "commands/command_cd.h"
@@ -27,8 +25,6 @@ CommandFactory::CommandFactory() {
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("subscribe", COMMAND_SUBSCRIBE));
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("subs", COMMAND_SUBSCRIBE));
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("timeout", COMMAND_TIMEOUT));
-  command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("file", COMMAND_FILE));
-  command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("filelist", COMMAND_FILELIST));
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("help", COMMAND_HELP));
   command_str_map.insert(std::pair<std::string, COMMAND_TYPE>("?", COMMAND_HELP));
 }
@@ -52,10 +48,6 @@ std::shared_ptr<Command> CommandFactory::get_command(std::string _line) {
       return make_shared_<CommandSet>(cmd);
     case COMMAND_TIMEOUT:
       return make_shared_<CommandTimeout>(cmd);
-    case COMMAND_FILE:
-      return make_shared_<CommandFile>(cmd);
-    case COMMAND_FILELIST:
-      return make_shared_<CommandFileList>(cmd);
     case COMMAND_HELP:
       return make_shared_<CommandHelp>(cmd);
   }
@@ -108,12 +100,6 @@ void CommandFactory::print_info(command_data cmd_data){
       break;
     case COMMAND_TIMEOUT:
       CommandTimeout(cmd_data).print_usage_info();
-      break;
-    case COMMAND_FILE:
-      CommandFile(cmd_data).print_usage_info();
-      break;
-    case COMMAND_FILELIST:
-      CommandFileList(cmd_data).print_usage_info();
       break;
   }
 }
