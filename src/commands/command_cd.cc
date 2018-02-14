@@ -26,12 +26,16 @@ COMMAND_RETURN_TYPE CommandCD::_execute() {
     target_path = std::string("");
 
   set_invokable();
-  cache = link->list(target_path.c_str(), [&](IncomingListCache &cache,
-                                              const std::vector<string_> &str) {
-    print_mutex.lock();
-    this->status = cache.get_status();
-    print_mutex.unlock();
-    print();
+
+  link->strand->post([this]() {
+
+      cache = dynamic_cast<DsLinkRequester*>(link.get())->list(target_path.c_str(), [&](IncomingListCache &cache,
+                                                                                const std::vector<string_> &str) {
+          print_mutex.lock();
+          this->status = cache.get_status();
+          print_mutex.unlock();
+          print();
+      });
   });
 
   return COMMAND_RETURN_CONTINUE;

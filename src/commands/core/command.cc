@@ -73,7 +73,7 @@ void Command::execute() {
 
   //Debug?
   if(cmd_data.is_debug){
-    static_cast<ConsoleLogger &>(link->strand->logger()).level = Logger::ALL___;
+    static_cast<ConsoleLogger &>(Logger::_()).level = Logger::ALL___;
   }
 
   try{
@@ -95,7 +95,7 @@ void Command::clear() {
   print_mutex.unlock();
   // Debug?
   if(cmd_data.is_debug){
-    static_cast<ConsoleLogger &>(link->strand->logger()).level = Logger::NONE__;
+    static_cast<ConsoleLogger &>(Logger::_()).level = Logger::NONE__;
   }
 }
 

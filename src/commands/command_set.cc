@@ -34,14 +34,18 @@ COMMAND_RETURN_TYPE CommandSet::_execute() {
   if(!attr.empty()) request->set_attribute_field(attr);
 
   set_invokable();
-  stream = link->set(
-      [&](IncomingSetStream& stream, ref_<const SetResponseMessage> message) {
-        print_mutex.lock();
-        this->message = message;
-        this->status = message->get_status();
-        print_mutex.unlock();
-        print();
-      }, copy_ref_(request));
+
+  link->strand->post([this, request = std::move(request)]() {
+
+      stream = dynamic_cast<DsLinkRequester*>(link.get())->set(
+              [&](IncomingSetStream& stream, ref_<const SetResponseMessage> message) {
+                  print_mutex.lock();
+                  this->message = message;
+                  this->status = message->get_status();
+                  print_mutex.unlock();
+                  print();
+              }, copy_ref_(request));
+  });
 
   return COMMAND_RETURN_CONTINUE;
 }
