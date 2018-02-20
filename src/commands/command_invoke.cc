@@ -30,15 +30,19 @@ COMMAND_RETURN_TYPE CommandInvoke::_execute() {
   }
 
   set_invokable();
-  stream = link->invoke(
-      [&](IncomingInvokeStream &stream, ref_<const InvokeResponseMessage> &&message) {
-        print_mutex.lock();
-        this->message = message;
-        this->status = message->get_status();
-        print_mutex.unlock();
-        print();
-      },
-      std::move(invoke_req));
+
+  link->strand->post([this, invoke_req = std::move(invoke_req)]() {
+
+      stream = dynamic_cast<DsLinkRequester*>(link.get())->invoke(
+              [&](IncomingInvokeStream &stream, ref_<const InvokeResponseMessage> &&message) {
+                  print_mutex.lock();
+                  this->message = message;
+                  this->status = message->get_status();
+                  print_mutex.unlock();
+                  print();
+              },
+              std::move(invoke_req));
+  });
 
   if(cmd_data.is_stream) return COMMAND_RETURN_WAIT;
 

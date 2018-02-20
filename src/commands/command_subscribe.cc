@@ -47,16 +47,20 @@ COMMAND_RETURN_TYPE CommandSubscribe::_execute() {
   }
 
   set_invokable();
-  incoming_subscribe_cache = link->subscribe(
-      target_path.c_str(),
-      [&](IncomingSubscribeCache &cache, ref_<const SubscribeResponseMessage> message) {
-        print_mutex.lock();
-        this->message = message;
-        this->status = message->get_status();
-        print_mutex.unlock();
-        print();
-      },
-      update_options);
+
+  link->strand->post([this, update_options = std::move(update_options)]() {
+
+      incoming_subscribe_cache = dynamic_cast<DsLinkRequester *>(link.get())->subscribe(
+              target_path.c_str(),
+              [&](IncomingSubscribeCache &cache, ref_<const SubscribeResponseMessage> message) {
+                  print_mutex.lock();
+                  this->message = message;
+                  this->status = message->get_status();
+                  print_mutex.unlock();
+                  print();
+              },
+              update_options);
+  });
 
   if(cmd_data.is_stream) return COMMAND_RETURN_WAIT;
 

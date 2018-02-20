@@ -19,7 +19,7 @@ CmdLine::CmdLine(std::shared_ptr<App> app, ref_<DsLink> dslink) {
   std::cout << cmdlog::info << "If you are new user type 'help' to see available commands" << cmdlog::endl;
 
   dslink->connect(
-      [&](const shared_ptr_<Connection> connection) {
+      [&](const shared_ptr_<Connection> connection, ref_<DsLinkRequester> link_req) {
         if(!connection){
           set_connected(false);
           return;

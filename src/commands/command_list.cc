@@ -21,9 +21,11 @@ const char *CommandList::_get_usage_info() {
 
 COMMAND_RETURN_TYPE CommandList::_execute() {
   target_path = Command::merge_paths(current_path, cmd_data.get_path_str());
-
   set_invokable();
-  incoming_list_cache = link->list(
+
+  link->strand->post([this]() {
+
+      incoming_list_cache = dynamic_cast<DsLinkRequester*>(link.get())->list(
       target_path.c_str(),
       [&](IncomingListCache &cache, const std::vector<string_> &str) {
         print_mutex.lock();
@@ -32,6 +34,7 @@ COMMAND_RETURN_TYPE CommandList::_execute() {
         print_mutex.unlock();
         print();
       });
+  });
 
   if (cmd_data.is_stream) return COMMAND_RETURN_WAIT;
 
