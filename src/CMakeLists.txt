@@ -12,8 +12,6 @@ set(SOURCES main.cc
 		        commands/command_cd.cc
 		        commands/command_set.cc
 		        commands/command_timeout.cc
-		        commands/command_file.cc
-		        commands/command_filelist.cc
 		        commands/command_invoke.cc
 		        commands/command_subscribe.cc
 		        commands/command_quit.cc)
