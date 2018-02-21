@@ -25,18 +25,20 @@ COMMAND_RETURN_TYPE CommandList::_execute() {
 
   link->strand->post([this]() {
 
-      incoming_list_cache = dynamic_cast<DsLinkRequester*>(link.get())->list(
-      target_path.c_str(),
-      [&](IncomingListCache &cache, const std::vector<string_> &str) {
-        print_mutex.lock();
-        this->changes = str;
-        this->status = cache.get_status();
-        print_mutex.unlock();
-        print();
-      });
+    incoming_list_cache =
+        dynamic_cast<DsLinkRequester *>(link.get())
+            ->list(target_path.c_str(), [&](IncomingListCache &cache,
+                                            const std::vector<string_> &str) {
+              print_mutex.lock();
+              this->changes = str;
+              this->status = cache.get_status();
+              print_mutex.unlock();
+              print();
+            });
   });
 
-  if (cmd_data.is_stream) return COMMAND_RETURN_WAIT;
+  if (cmd_data.is_stream)
+    return COMMAND_RETURN_WAIT;
 
   return COMMAND_RETURN_CONTINUE;
 }
@@ -53,9 +55,11 @@ void CommandList::_clear() {
 
 void CommandList::_print() {
   auto map = incoming_list_cache->get_map();
-  if (status == MessageStatus::OK)
-    std::cout << cmdlog::var << Var(new VarMap(map)).to_json(1) << cmdlog::endl;
-  else
+  if (status == MessageStatus::OK) {
+    for (auto &it : map) {
+      std::cout << cmdlog::var << it.first << " : " << it.second.to_json() << cmdlog::endl;
+    }
+  } else
     std::cout << cmdlog::var << "Message Status : " << to_string(status)
               << cmdlog::endl;
 }
