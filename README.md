@@ -12,6 +12,8 @@ List to given directory and close the stream after listing.
 
 `> ls TARGET_PATH` -> list to target path
 
+`> ls "TARGET PATH"` -> list to target path including space
+
 > If you put "stream" in front it like `stream list PATH` or `stream list` it doesn't close the stream so you can take updates in real time from server.
 ## command: cd
 Changes current directory to given directory. If there is '/' given in beginning it overrides current directory.
