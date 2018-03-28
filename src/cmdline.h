@@ -37,10 +37,11 @@ class CmdLine {
   std::unique_ptr<boost::asio::io_service::strand> strand;
 
   bool get_input();
-  void print_wanting_user_input();
+
 
  public:
   CmdLine(std::shared_ptr<App> app, ref_<DsLink> dslink);
+  void print_wanting_user_input();
 
   void run();
 };

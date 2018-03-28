@@ -3,6 +3,9 @@
 #include <boost/algorithm/string.hpp>
 #include "utils/cmdlog.h"
 #include "utils/kbhit.h"
+#include "utils/linenoise.h"
+
+std::ostringstream buffer;
 
 CmdLine::CmdLine(std::shared_ptr<App> app, ref_<DsLink> dslink) {
   this->app = app;
@@ -61,9 +64,26 @@ void CmdLine::run() {
   app->wait();
 }
 
+void completion(const char *buf, linenoiseCompletions *lc) {
+  if (buf[0] == 'h') {
+    linenoiseAddCompletion(lc,"hello");
+    linenoiseAddCompletion(lc,"hello there");
+  }
+}
+
+char *hints(const char *buf, int *color, int *bold) {
+  if (!strcasecmp(buf,"hello")) {
+    *color = 35;
+    *bold = 0;
+    return " World";
+  }
+  return NULL;
+}
 
 bool CmdLine::get_input() {
   is_waiting_user_input = true;
+
+  char *line1;
 
   char line[CMD_MAX_LENGTH];
 
@@ -71,7 +91,44 @@ bool CmdLine::get_input() {
   print_wanting_user_input();
 
   // 1. Input taking
-  if (!fgets(line, CMD_MAX_LENGTH, stdin)) return false;
+  //if (!fgets(line, CMD_MAX_LENGTH, stdin)) return false;
+
+  linenoiseSetCompletionCallback(completion);
+  linenoiseSetHintsCallback(hints);
+
+  /* Load history from file. The history file is just a plain text file
+   * where entries are separated by newlines. */
+  linenoiseHistoryLoad("history.txt"); /* Load the history at startup */
+
+//  while((line1 = linenoise("")) != NULL) {
+//    /* Do something with the string. */
+//    if (line1[0] != '\0' && line1[0] != '/') {
+//      printf("echo: '%s'\n", line1);
+//      linenoiseHistoryAdd(line1); /* Add to the history. */
+//      linenoiseHistorySave("history.txt"); /* Save the history on disk. */
+//    } else if (!strncmp(line1,"/historylen",11)) {
+//      /* The "/historylen" command will change the history len. */
+//      int len = atoi(line1+11);
+//      linenoiseHistorySetMaxLen(len);
+//    } else if (line1[0] == '/') {
+//      printf("Unreconized command: %s\n", line1);
+//    }
+//    free(line1);
+//  }
+
+  line1 = linenoise(buffer.str().c_str());
+
+  buffer.clear();
+  buffer.str(std::string());
+
+  if (line1 == NULL)
+    exit(0);
+
+  linenoiseHistoryAdd(line1);
+  linenoiseHistorySave("history.txt");
+  strcpy(line, line1);
+  free(line1);
+
   is_waiting_user_input = false;
 
   std::string line_str(line);
@@ -133,25 +190,39 @@ void CmdLine::set_connected(bool value){
 
   if(is_waiting_user_input){
     print_wanting_user_input();
+    std::cout << is_connected << std::endl;
     return;
   }
+
+
 
   // It can be streaming...
   // maybe do something here
 }
+std::ostringstream toString( std::ostream& str )
+{
+  std::ostringstream ss;
+  ss << str.rdbuf();
+  return ss;
+}
 
 void CmdLine::print_wanting_user_input(){
-  std::cout<<std::endl;
+  //buffer<<std::endl;
   if(is_connected){
-    std::cout<<termcolor::green;
+    //buffer << toString(termcolor::green(buffer)).str().c_str();
+    buffer<<"\033[32m"; //green
   }
   else{
-    std::cout<<termcolor::red;
+//    buffer<<termcolor::red;
+    buffer<<"\033[31m"; //red
   }
-  std::cout << CMDLINE_CIRCLE << " ";
+  buffer << CMDLINE_CIRCLE << " ";
 
-  std::cout<<cmdlog::path<<"> "<<Command::current_path<<cmdlog::reset<<" ";
-  std::cout<<std::flush;
+  buffer << "\033[00m";
+
+  buffer<<cmdlog::path<<"> "<<Command::current_path<<cmdlog::reset<<" ";
+  //std::cout<<std::flush;
+
 }
 
 
