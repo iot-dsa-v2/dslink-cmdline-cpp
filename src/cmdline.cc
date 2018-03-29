@@ -183,14 +183,51 @@ bool CmdLine::get_input() {
 
 void CmdLine::set_connected(bool value){
 
+  std::string str;
   // We don't require to do something
   if( value == is_connected) return;
 
   is_connected = value;
 
   if(is_waiting_user_input){
+    printf("\n");
     print_wanting_user_input();
-    std::cout << is_connected << std::endl;
+    //std::cout<<std::endl;
+    //std::cout.clear();
+
+    //std::cout<<std::flush;
+    if(is_connected){
+      //buffer << toString(termcolor::green(buffer)).str().c_str();
+      str += "\033[32m"; //green
+    }
+    else{
+//    buffer<<termcolor::red;
+      str += "\033[31m"; //red
+    }
+    str += CMDLINE_CIRCLE;
+
+    str += " ";
+
+    str += "\033[00m";
+
+    //str += cmdlog::path;
+    str += "> ";
+    str +=  Command::current_path;
+    //str += cmdlog::reset;
+    str += " ";
+    //std::cout<<std::flush;
+
+
+    struct linenoiseState test = getLinenoisestate();
+
+    //test.prompt = str.c_str();
+
+    test.test = 'a';
+
+    setLinenoisestateprompt(test);
+
+    refreshLine(&test);
+
     return;
   }
 

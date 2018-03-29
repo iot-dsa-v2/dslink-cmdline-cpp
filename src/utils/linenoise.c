@@ -132,24 +132,6 @@ static int history_max_len = LINENOISE_DEFAULT_HISTORY_MAX_LEN;
 static int history_len = 0;
 static char **history = NULL;
 
-/* The linenoiseState structure represents the state during line editing.
- * We pass this state to functions implementing specific editing
- * functionalities. */
-struct linenoiseState {
-    int ifd;            /* Terminal stdin file descriptor. */
-    int ofd;            /* Terminal stdout file descriptor. */
-    char *buf;          /* Edited line buffer. */
-    size_t buflen;      /* Edited line buffer size. */
-    const char *prompt; /* Prompt to display. */
-    size_t plen;        /* Prompt length. */
-    size_t pos;         /* Current cursor position. */
-    size_t oldpos;      /* Previous refresh cursor position. */
-    size_t len;         /* Current edited line length. */
-    size_t cols;        /* Number of columns in terminal. */
-    size_t maxrows;     /* Maximum num of rows used so far (multiline mode) */
-    int history_index;  /* The history index we are currently editing. */
-};
-
 enum KEY_ACTION{
 	KEY_NULL = 0,	    /* NULL */
 	CTRL_A = 1,         /* Ctrl+a */
@@ -174,7 +156,6 @@ enum KEY_ACTION{
 
 static void linenoiseAtExit(void);
 int linenoiseHistoryAdd(const char *line);
-static void refreshLine(struct linenoiseState *l);
 
 /* Debugging macro. */
 #if 0
@@ -625,7 +606,7 @@ static void refreshMultiLine(struct linenoiseState *l) {
 
 /* Calls the two low level functions refreshSingleLine() or
  * refreshMultiLine() according to the selected mode. */
-static void refreshLine(struct linenoiseState *l) {
+void refreshLine(struct linenoiseState *l) {
     if (mlmode)
         refreshMultiLine(l);
     else
@@ -767,8 +748,6 @@ void linenoiseEditDeletePrevWord(struct linenoiseState *l) {
  * The function returns the length of the current buffer. */
 static int linenoiseEdit(int stdin_fd, int stdout_fd, char *buf, size_t buflen, const char *prompt)
 {
-    struct linenoiseState l;
-
     /* Populate the linenoise state that we pass to functions implementing
      * specific editing functionalities. */
     l.ifd = stdin_fd;
@@ -796,7 +775,7 @@ static int linenoiseEdit(int stdin_fd, int stdout_fd, char *buf, size_t buflen, 
         char c;
         int nread;
         char seq[3];
-
+        test = l;
         nread = read(l.ifd,&c,1);
         if (nread <= 0) return l.len;
 
@@ -1198,4 +1177,12 @@ int linenoiseHistoryLoad(const char *filename) {
     }
     fclose(fp);
     return 0;
+}
+
+struct linenoiseState getLinenoisestate() {
+    return l;
+}
+
+void setLinenoisestateprompt(struct linenoiseState str) {
+  l = str;
 }

@@ -48,6 +48,25 @@ typedef struct linenoiseCompletions {
   char **cvec;
 } linenoiseCompletions;
 
+/* The linenoiseState structure represents the state during line editing.
+ * We pass this state to functions implementing specific editing
+ * functionalities. */
+struct linenoiseState {
+  int ifd;            /* Terminal stdin file descriptor. */
+  int ofd;            /* Terminal stdout file descriptor. */
+  char *buf;          /* Edited line buffer. */
+  size_t buflen;      /* Edited line buffer size. */
+  const char *prompt; /* Prompt to display. */
+  size_t plen;        /* Prompt length. */
+  size_t pos;         /* Current cursor position. */
+  size_t oldpos;      /* Previous refresh cursor position. */
+  size_t len;         /* Current edited line length. */
+  size_t cols;        /* Number of columns in terminal. */
+  size_t maxrows;     /* Maximum num of rows used so far (multiline mode) */
+  int history_index;  /* The history index we are currently editing. */
+  char test;
+};
+
 typedef void(linenoiseCompletionCallback)(const char *, linenoiseCompletions *);
 typedef char*(linenoiseHintsCallback)(const char *, int *color, int *bold);
 typedef void(linenoiseFreeHintsCallback)(void *);
@@ -65,6 +84,13 @@ int linenoiseHistoryLoad(const char *filename);
 void linenoiseClearScreen(void);
 void linenoiseSetMultiLine(int ml);
 void linenoisePrintKeyCodes(void);
+struct linenoiseState getLinenoisestate();
+void setLinenoisestateprompt(struct linenoiseState str);
+
+void refreshLine(struct linenoiseState *l);
+
+struct linenoiseState test;
+struct linenoiseState l;
 
 #ifdef __cplusplus
 }
