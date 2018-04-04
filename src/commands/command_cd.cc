@@ -52,7 +52,7 @@ void CommandCD::_clear() {
 }
 
 void CommandCD::_print() {
-  if (status == MessageStatus::OK) {
+  if (status == Status::OK) {
     current_path = target_path;
   } else {
     std::cout << cmdlog::error << "Failed to change path to " << cmdlog::path
