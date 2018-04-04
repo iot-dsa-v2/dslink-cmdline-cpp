@@ -1,11 +1,13 @@
+#include "dsa_common.h"
 #include "cmdline.h"
 
 #include <boost/algorithm/string.hpp>
 #include "utils/cmdlog.h"
 #include "utils/kbhit.h"
 #include "utils/linenoise.h"
+#include "utils/ConvertUTF.h"
 
-std::ostringstream buffer;
+#include <wctype.h>
 
 CmdLine::CmdLine(std::shared_ptr<App> app, ref_<DsLink> dslink) {
   this->app = app;
@@ -63,27 +65,75 @@ void CmdLine::run() {
   app->close();
   app->wait();
 }
-
-void completion(const char *buf, linenoiseCompletions *lc) {
-  if (buf[0] == 'h') {
-    linenoiseAddCompletion(lc,"hello");
-    linenoiseAddCompletion(lc,"hello there");
+const int SLEEP_INTERVAL = 10;
+int wait_for_bool(int wait_time, const std::function<bool()>& callback) {
+  int waited = 0;
+  while (waited < wait_time) {
+    if (callback()) {
+      return waited;
+    }
+    boost::this_thread::sleep(
+        boost::posix_time::milliseconds(SLEEP_INTERVAL));
+    waited += SLEEP_INTERVAL;
   }
+  return -1;
 }
 
-char *hints(const char *buf, int *color, int *bold) {
-  if (!strcasecmp(buf,"hello")) {
-    *color = 35;
-    *bold = 0;
-    return " World";
+
+void completion(const char *buf, linenoiseCompletions *lc) {
+  std::string buf_str(buf);
+  std::string path_to_list;
+  std::string filter;
+  path_to_list = Command::current_path;
+
+  std::size_t found_slash = buf_str.rfind("/");
+  if (found_slash != std::string::npos) {
+    if(!path_to_list.empty())
+      path_to_list += "/";
+    path_to_list += buf_str.substr(0, found_slash);
+    filter = buf_str.substr(found_slash+1);
+  } else {
+    filter = buf_str;
   }
-  return NULL;
+
+  VarMap list_map;
+  bool listed = false;
+  Command::link->strand->post([&, path_to_list]() {
+
+    auto incoming_list_cache =
+        dynamic_cast<DsLinkRequester *>(Command::link.get())
+            ->list(path_to_list, [&](IncomingListCache &cache,
+                                            const std::vector<string_> &str) {
+              VarMap map = cache.get_map();
+              list_map.insert(map.begin(), map.end());
+              listed = true;
+              //close cache
+              cache.close();
+            });
+  });
+  int list_done = wait_for_bool(500,[&]() -> bool { return listed; });
+  if(list_done != -1) {
+    if(Command::current_path.size() != 0)
+      path_to_list = path_to_list.erase(0, Command::current_path.size()+1);
+    else
+      path_to_list = path_to_list.erase(0, Command::current_path.size());
+    for (auto &list_item : list_map) {
+      std::size_t found = list_item.first.find(filter);
+      if (found != std::string::npos && found == 0) {
+        if(!path_to_list.empty())
+          linenoiseAddCompletion(lc, (path_to_list + "/" + list_item.first).c_str());
+        else
+          linenoiseAddCompletion(lc, list_item.first.c_str());
+      }
+    }
+  }
+
 }
 
 bool CmdLine::get_input() {
   is_waiting_user_input = true;
 
-  char *line1;
+  char *line_ret;
 
   char line[CMD_MAX_LENGTH];
 
@@ -94,40 +144,23 @@ bool CmdLine::get_input() {
   //if (!fgets(line, CMD_MAX_LENGTH, stdin)) return false;
 
   linenoiseSetCompletionCallback(completion);
-  linenoiseSetHintsCallback(hints);
 
   /* Load history from file. The history file is just a plain text file
    * where entries are separated by newlines. */
   linenoiseHistoryLoad("history.txt"); /* Load the history at startup */
 
-//  while((line1 = linenoise("")) != NULL) {
-//    /* Do something with the string. */
-//    if (line1[0] != '\0' && line1[0] != '/') {
-//      printf("echo: '%s'\n", line1);
-//      linenoiseHistoryAdd(line1); /* Add to the history. */
-//      linenoiseHistorySave("history.txt"); /* Save the history on disk. */
-//    } else if (!strncmp(line1,"/historylen",11)) {
-//      /* The "/historylen" command will change the history len. */
-//      int len = atoi(line1+11);
-//      linenoiseHistorySetMaxLen(len);
-//    } else if (line1[0] == '/') {
-//      printf("Unreconized command: %s\n", line1);
-//    }
-//    free(line1);
-//  }
-
-  line1 = linenoise(buffer.str().c_str());
+  line_ret = linenoise(buffer.str().c_str());
 
   buffer.clear();
   buffer.str(std::string());
 
-  if (line1 == NULL)
+  if (line_ret == NULL)
     exit(0);
 
-  linenoiseHistoryAdd(line1);
+  linenoiseHistoryAdd(line_ret);
   linenoiseHistorySave("history.txt");
-  strcpy(line, line1);
-  free(line1);
+  strcpy(line, line_ret);
+  free(line_ret);
 
   is_waiting_user_input = false;
 
@@ -190,44 +223,15 @@ void CmdLine::set_connected(bool value){
   is_connected = value;
 
   if(is_waiting_user_input){
-    printf("\n");
-    print_wanting_user_input();
-    //std::cout<<std::endl;
-    //std::cout.clear();
-
-    //std::cout<<std::flush;
+    std::cout << std::endl;
     if(is_connected){
-      //buffer << toString(termcolor::green(buffer)).str().c_str();
-      str += "\033[32m"; //green
+      std::cout << termcolor::green;
     }
     else{
-//    buffer<<termcolor::red;
-      str += "\033[31m"; //red
+      std::cout << termcolor::red;
     }
-    str += CMDLINE_CIRCLE;
-
-    str += " ";
-
-    str += "\033[00m";
-
-    //str += cmdlog::path;
-    str += "> ";
-    str +=  Command::current_path;
-    //str += cmdlog::reset;
-    str += " ";
-    //std::cout<<std::flush;
-
-
-    struct linenoiseState test = getLinenoisestate();
-
-    //test.prompt = str.c_str();
-
-    test.test = 'a';
-
-    setLinenoisestateprompt(test);
-
-    refreshLine(&test);
-
+    std::cout << CMDLINE_CIRCLE << " " << termcolor::reset << "> " << Command::current_path << " ";
+    std::cout<<std::flush;
     return;
   }
 
