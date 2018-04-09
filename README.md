@@ -53,7 +53,7 @@ A type which based on msgpack. It can be:
 ## inplace: binary_file | text_file
 Open file content from path and inplace file content into Var.
 
-`> invoke install_from_zip {"name":"mynewdslink", "zip":binary_file(myzip.zip)}` -> open myzip.zip and dumps file content to "zip"
+`> invoke Install_Zip {"Name":"mynewdslink", "Zip":binary_file(myzip.zip)}` -> open myzip.zip and dumps file content to "zip"
 
 ## command: set
 set a path with given value and optional attribe from server.
@@ -84,4 +84,4 @@ Sometimes server don't respond so cmd waits TIMEOUT milisecond and than inform t
 
 ## Examples
 
-`> invoke install_from_zip {"name":"mynewdslink", "zip":binary_file(myzip.zip)}`
+`> invoke Install_Zip {"Name":"mynewdslink", "Zip":binary_file(myzip.zip)}`
