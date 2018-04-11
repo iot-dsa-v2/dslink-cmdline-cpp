@@ -27,15 +27,17 @@ COMMAND_RETURN_TYPE CommandCD::_execute() {
 
   set_invokable();
 
-  link->strand->post([this]() {
+  link->strand->post([ this, keepptr = shared_from_this() ]() {
 
-      cache = dynamic_cast<DsLinkRequester*>(link.get())->list(target_path.c_str(), [&](IncomingListCache &cache,
-                                                                                const std::vector<string_> &str) {
+    cache =
+        dynamic_cast<DsLinkRequester *>(link.get())->list(target_path.c_str(), [
+          this, keepptr = std::move(keepptr)
+        ](IncomingListCache & cache, const std::vector<string_> &str) {
           print_mutex.lock();
           this->status = cache.get_status();
           print_mutex.unlock();
           print();
-      });
+        });
   });
 
   return COMMAND_RETURN_CONTINUE;
@@ -60,4 +62,3 @@ void CommandCD::_print() {
               << "Message status : " << to_string(status) << std::endl;
   }
 }
-
