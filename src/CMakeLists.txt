@@ -4,6 +4,9 @@ project(dslink-cpp-system)
 # add sources
 set(SOURCES main.cc
 		        cmdline.cc
+				utils/linenoise.cpp
+				utils/ConvertUTF.cpp
+				utils/wcwidth.cpp
 		        command_factory.cc
 		        commands/core/command.cc
 		        commands/core/command_data.cc

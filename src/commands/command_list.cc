@@ -55,7 +55,7 @@ void CommandList::_clear() {
 
 void CommandList::_print() {
   auto map = incoming_list_cache->get_map();
-  if (status == MessageStatus::OK) {
+  if (status == Status::OK) {
     for (auto &it : map) {
       std::cout << cmdlog::var << it.first << " : " << it.second.to_json() << cmdlog::endl;
     }

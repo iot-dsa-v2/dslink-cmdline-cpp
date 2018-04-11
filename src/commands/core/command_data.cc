@@ -39,10 +39,10 @@ command_data tokenize(std::string _line) {
         break;
     }
 
-    if(pos > line.size()){
-      cmd.token_error = true;
-      break;
-    }
+//    if(pos > line.size()){
+//      cmd.token_error = true;
+//      break;
+//    }
 
     tokens.push_back(char_ + line.substr(0, pos));
 

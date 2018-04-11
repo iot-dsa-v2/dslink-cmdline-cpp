@@ -26,7 +26,7 @@ class Command {
 
  protected:
   command_data cmd_data;
-  MessageStatus status;
+  Status status;
 
   boost::mutex print_mutex;
 
@@ -64,7 +64,7 @@ class Command {
   static std::string merge_paths(const std::string &first, const std::string &second);
   static int wait_for_bool(const std::function<bool()>& callback);
 
-  static const char* get_status_str(MessageStatus status);
+  static const char* get_status_str(Status status);
   static void print_usage_static(std::string usage_str);
 
 };

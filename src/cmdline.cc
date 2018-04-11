@@ -1,8 +1,13 @@
+#include "dsa_common.h"
 #include "cmdline.h"
 
 #include <boost/algorithm/string.hpp>
 #include "utils/cmdlog.h"
 #include "utils/kbhit.h"
+#include "utils/linenoise.h"
+#include "utils/ConvertUTF.h"
+
+#include <wctype.h>
 
 CmdLine::CmdLine(std::shared_ptr<App> app, ref_<DsLink> dslink) {
   this->app = app;
@@ -60,10 +65,75 @@ void CmdLine::run() {
   app->close();
   app->wait();
 }
+const int SLEEP_INTERVAL = 10;
+int wait_for_bool(int wait_time, const std::function<bool()>& callback) {
+  int waited = 0;
+  while (waited < wait_time) {
+    if (callback()) {
+      return waited;
+    }
+    boost::this_thread::sleep(
+        boost::posix_time::milliseconds(SLEEP_INTERVAL));
+    waited += SLEEP_INTERVAL;
+  }
+  return -1;
+}
 
+
+void completion(const char *buf, linenoiseCompletions *lc) {
+  std::string buf_str(buf);
+  std::string path_to_list;
+  std::string filter;
+  path_to_list = Command::current_path;
+
+  std::size_t found_slash = buf_str.rfind("/");
+  if (found_slash != std::string::npos) {
+    if(!path_to_list.empty())
+      path_to_list += "/";
+    path_to_list += buf_str.substr(0, found_slash);
+    filter = buf_str.substr(found_slash+1);
+  } else {
+    filter = buf_str;
+  }
+
+  VarMap list_map;
+  bool listed = false;
+  Command::link->strand->post([&, path_to_list]() {
+
+    auto incoming_list_cache =
+        dynamic_cast<DsLinkRequester *>(Command::link.get())
+            ->list(path_to_list, [&](IncomingListCache &cache,
+                                            const std::vector<string_> &str) {
+              VarMap map = cache.get_map();
+              list_map.insert(map.begin(), map.end());
+              listed = true;
+              //close cache
+              cache.close();
+            });
+  });
+  int list_done = wait_for_bool(500,[&]() -> bool { return listed; });
+  if(list_done != -1) {
+    if(Command::current_path.size() != 0)
+      path_to_list = path_to_list.erase(0, Command::current_path.size()+1);
+    else
+      path_to_list = path_to_list.erase(0, Command::current_path.size());
+    for (auto &list_item : list_map) {
+      std::size_t found = list_item.first.find(filter);
+      if (found != std::string::npos && found == 0) {
+        if(!path_to_list.empty())
+          linenoiseAddCompletion(lc, (path_to_list + "/" + list_item.first).c_str());
+        else
+          linenoiseAddCompletion(lc, list_item.first.c_str());
+      }
+    }
+  }
+
+}
 
 bool CmdLine::get_input() {
   is_waiting_user_input = true;
+
+  char *line_ret;
 
   char line[CMD_MAX_LENGTH];
 
@@ -71,7 +141,27 @@ bool CmdLine::get_input() {
   print_wanting_user_input();
 
   // 1. Input taking
-  if (!fgets(line, CMD_MAX_LENGTH, stdin)) return false;
+  //if (!fgets(line, CMD_MAX_LENGTH, stdin)) return false;
+
+  linenoiseSetCompletionCallback(completion);
+
+  /* Load history from file. The history file is just a plain text file
+   * where entries are separated by newlines. */
+  linenoiseHistoryLoad("history.txt"); /* Load the history at startup */
+
+  line_ret = linenoise(buffer.str().c_str());
+
+  buffer.clear();
+  buffer.str(std::string());
+
+  if (line_ret == NULL)
+    exit(0);
+
+  linenoiseHistoryAdd(line_ret);
+  linenoiseHistorySave("history.txt");
+  strcpy(line, line_ret);
+  free(line_ret);
+
   is_waiting_user_input = false;
 
   std::string line_str(line);
@@ -126,32 +216,54 @@ bool CmdLine::get_input() {
 
 void CmdLine::set_connected(bool value){
 
+  std::string str;
   // We don't require to do something
   if( value == is_connected) return;
 
   is_connected = value;
 
   if(is_waiting_user_input){
-    print_wanting_user_input();
+    std::cout << std::endl;
+    if(is_connected){
+      std::cout << termcolor::green;
+    }
+    else{
+      std::cout << termcolor::red;
+    }
+    std::cout << CMDLINE_CIRCLE << " " << termcolor::reset << "> " << Command::current_path << " ";
+    std::cout<<std::flush;
     return;
   }
+
+
 
   // It can be streaming...
   // maybe do something here
 }
+std::ostringstream toString( std::ostream& str )
+{
+  std::ostringstream ss;
+  ss << str.rdbuf();
+  return ss;
+}
 
 void CmdLine::print_wanting_user_input(){
-  std::cout<<std::endl;
+  //buffer<<std::endl;
   if(is_connected){
-    std::cout<<termcolor::green;
+    //buffer << toString(termcolor::green(buffer)).str().c_str();
+    buffer<<"\033[32m"; //green
   }
   else{
-    std::cout<<termcolor::red;
+//    buffer<<termcolor::red;
+    buffer<<"\033[31m"; //red
   }
-  std::cout << CMDLINE_CIRCLE << " ";
+  buffer << CMDLINE_CIRCLE << " ";
 
-  std::cout<<cmdlog::path<<"> "<<Command::current_path<<cmdlog::reset<<" ";
-  std::cout<<std::flush;
+  buffer << "\033[00m";
+
+  buffer<<cmdlog::path<<"> "<<Command::current_path<<cmdlog::reset<<" ";
+  //std::cout<<std::flush;
+
 }
 
 
