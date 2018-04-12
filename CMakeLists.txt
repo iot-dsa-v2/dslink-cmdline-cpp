@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6.2)
+cmake_minimum_required(VERSION 3.5.1)
 
 set(TARGET_NAME cmdline-dslink)
 
