@@ -55,11 +55,38 @@ void CommandList::_clear() {
 
 void CommandList::_print() {
   auto map = incoming_list_cache->get_map();
-  if (status == Status::OK) {
-    for (auto &it : map) {
-      std::cout << cmdlog::var << it.first << " : " << it.second.to_json() << cmdlog::endl;
+  auto profile_map = incoming_list_cache->get_profile_map();
+  if (changes.empty()) {
+
+    for (auto &it : profile_map) {
+      if (map.count(it.first) == 0) {
+        std::cout << cmdlog::var << it.first << " : " << it.second.to_json()
+                  << cmdlog::endl;
+      }
     }
-  } else
+    for (auto &it : map) {
+      std::cout << cmdlog::var << it.first << " : " << it.second.to_json()
+                << cmdlog::endl;
+    }
+  } else {
+    for (auto &change : changes) {
+      if (map.count(change) > 0) {
+        std::cout << cmdlog::var << change << " : " << map[change].to_json()
+                  << cmdlog::endl;
+      } else if (profile_map.count(change) > 0) {
+        // deleted but still in profile
+        std::cout << cmdlog::var << change << " : " << profile_map[change].to_json()
+                  << cmdlog::endl;
+      } else {
+        // deleted
+        std::cout << cmdlog::var << change << " : "
+                  << "Removed" << cmdlog::endl;
+      }
+    }
+  }
+
+  if (status != Status::OK) {
     std::cout << cmdlog::var << "Message Status : " << to_string(status)
               << cmdlog::endl;
+  }
 }
