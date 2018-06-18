@@ -16,6 +16,8 @@
 
 #include "utils/cmdlog.h"
 
+#include "dsa/responder.h"
+
 using namespace dsa;
 
 

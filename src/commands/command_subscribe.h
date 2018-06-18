@@ -4,6 +4,8 @@
 
 #include "core/command.h"
 
+#include "message/response/subscribe_response_message.h"
+
 namespace subscribe_command{
 enum SubscribeOptStr{
   LEVEL,
